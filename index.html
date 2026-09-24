@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Steffen & Nini — 29 November 2026</title>
+<style>
+:root{
+  --ivory:#F6F0E7; --champagne:#D8C3A5; --red:#9E2A2B; --taupe:#8A7565;
+  --deep:#681E2A; --ink:#352825; --paper:#FFFBF6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+
+.serif{font-family:Georgia,"Times New Roman",serif}
+.smallcaps{letter-spacing:.18em;text-transform:uppercase;font-size:.74rem}
+.review-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:100;background:var(--deep);color:white;text-align:center;padding:8px 16px;font-size:.76rem;letter-spacing:.08em}
+body.review .review-banner{display:block}
+body.review #opening{top:32px}
+#opening{
+  position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:24px;color:white;text-align:center;
+  background:
+    linear-gradient(180deg,rgba(38,18,22,.18),rgba(38,18,22,.64)),
+    radial-gradient(circle at 50% 24%,#cdb8aa 0,#9b7e73 36%,#4f3637 100%);
+}
+#opening:before{content:"PREWEDDING PHOTO PLACEHOLDER";position:absolute;font-size:.7rem;letter-spacing:.25em;color:rgba(255,255,255,.2)}
+.open-card{position:relative;z-index:1;width:min(94vw,520px);padding:34px 24px;border:1px solid rgba(255,255,255,.33);background:rgba(51,26,30,.15);backdrop-filter:blur(4px)}
+.xi{font-family:"Times New Roman",serif;font-size:4.3rem;line-height:1;color:#ecd2a0;font-weight:700}
+.open-card h1{font:500 clamp(2.8rem,10vw,4.7rem)/.95 Georgia,serif;margin:.35rem 0 .75rem}
+.open-date{letter-spacing:.17em;font-size:.78rem}
+.guest{font:italic 1.18rem/1.5 Georgia,serif;margin:1.7rem 0 .25rem}
+.seats{font-size:.78rem;color:#f2e8db;margin-bottom:1.4rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:999px;border:1px solid var(--champagne);background:var(--red);color:#fff;text-decoration:none;text-transform:uppercase;letter-spacing:.11em;font-weight:700;font-size:.72rem;cursor:pointer}
+.btn.secondary{background:transparent;color:var(--red)}
+main{opacity:1;transform:none}
+main.ready{opacity:1;transform:none}
+section{padding:78px 20px}
+.container{max-width:900px;margin:auto}
+.center{text-align:center}
+.hero{padding-top:106px;text-align:center;position:relative}
+.brandmark{font-size:3.2rem;color:var(--red);line-height:1}
+.hero h1{font:500 clamp(3.1rem,9vw,6.6rem)/.95 Georgia,serif;color:var(--deep);margin:14px 0 18px}
+.hero .date{font-size:.92rem;letter-spacing:.17em}
+.hero .cn-date{margin-top:8px;color:var(--taupe)}
+.rule{width:70px;height:1px;background:var(--champagne);margin:26px auto}
+.quote{max-width:700px;margin:auto;text-align:center;font:italic 1.24rem/1.8 Georgia,serif}
+.quote .cn{font-style:normal;color:var(--red);display:block;font-size:1.35rem;margin-bottom:8px}
+.panel{border:1px solid #e8d7c4;background:rgba(255,255,255,.55);border-radius:28px;box-shadow:0 12px 40px rgba(73,40,39,.06)}
+.section-kicker{color:var(--red);margin-bottom:8px}
+.section-title{font:500 clamp(2rem,6vw,3rem)/1.08 Georgia,serif;color:var(--deep);margin:0 0 18px}
+.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:26px}
+.countdown div{text-align:center}
+.countdown b{display:block;font:500 2.1rem Georgia,serif;color:var(--red)}
+.countdown span{display:block;margin-top:7px;text-transform:uppercase;letter-spacing:.1em;font-size:.67rem;color:var(--taupe)}
+.event-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.event{padding:34px}
+.event h3{font:500 1.7rem Georgia,serif;color:var(--deep);margin:4px 0 12px}
+.event p{line-height:1.75;color:#66534e}
+.event .time{font-weight:700;color:var(--red)}
+.family-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.family{padding:30px;text-align:center}
+.family .name{font:500 1.8rem Georgia,serif;color:var(--deep)}
+.family .cn{color:var(--red);font-size:1.15rem;margin-top:3px}
+.family p{line-height:1.75}
+.story{max-width:700px;margin:auto;text-align:center;font:1.08rem/1.9 Georgia,serif}
+.gallery{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+.photo{min-height:280px;border-radius:24px;background:linear-gradient(135deg,#d8c4b6,#a78b82);display:grid;place-items:center;color:rgba(255,255,255,.7);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;overflow:hidden}
+.photo.tall{min-height:574px}
+.stack{display:grid;gap:14px}
+.wishes{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px}
+.wish-form{padding:28px}
+input,textarea,select{width:100%;border:1px solid #dbc8b5;background:#fffdf9;border-radius:14px;padding:13px 14px;margin:7px 0 12px;font:inherit;color:var(--ink)}
+textarea{min-height:110px;resize:vertical}
+.wish-list{padding:28px}
+.wish{padding:16px 0;border-bottom:1px solid #eadbca}
+.wish:last-child{border-bottom:0}
+.wish b{font-family:Georgia,serif;color:var(--deep)}
+.closing{min-height:72vh;display:grid;place-items:center;text-align:center;color:white;background:linear-gradient(180deg,rgba(65,27,32,.45),rgba(65,27,32,.72)),radial-gradient(circle at 50% 30%,#bba69a,#68494b)}
+.closing h2{font:500 clamp(2.5rem,8vw,5rem)/1 Georgia,serif;margin:14px 0}
+.music{position:fixed;right:16px;bottom:16px;z-index:60;width:48px;height:48px;border-radius:50%;border:1px solid var(--champagne);background:var(--red);color:white;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 26px rgba(65,27,32,.18)}
+.backtop{position:fixed;left:16px;bottom:16px;z-index:60;width:42px;height:42px;border-radius:50%;border:1px solid #e2ccb6;background:#fffaf3;color:var(--red);display:none;place-items:center;text-decoration:none}
+body.scrolled .backtop{display:grid}
+footer{padding:28px 18px;text-align:center;color:var(--taupe);font-size:.76rem}
+.review-note{display:none;margin:18px auto 0;max-width:640px;border:1px dashed var(--red);border-radius:16px;padding:12px 14px;color:var(--red);background:#fff8f2;font-size:.82rem}
+body.review .review-note{display:block}
+@media(max-width:720px){
+  section{padding:64px 18px}
+  .event-grid,.family-grid,.wishes,.gallery{grid-template-columns:1fr}
+  .photo.tall{min-height:420px}
+  .countdown{padding:20px 12px}
+  .event,.family,.wish-form,.wish-list{padding:24px}
+}
+
+#openToggle:not(:checked) ~ main{display:none}
+#openToggle:checked + .opening-single{display:none}
+.opening-single{
+  position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:24px;color:white;text-align:center;
+  background:linear-gradient(180deg,rgba(38,18,22,.18),rgba(38,18,22,.68)),
+  radial-gradient(circle at 50% 24%,#cdb8aa 0,#9b7e73 36%,#4f3637 100%);
+}
+.opening-single:before{content:"PREWEDDING PHOTO PLACEHOLDER";position:absolute;font-size:.7rem;letter-spacing:.25em;color:rgba(255,255,255,.18)}
+.open-card-single{position:relative;z-index:1;width:min(94vw,520px);padding:36px 24px;border:1px solid rgba(255,255,255,.35);background:rgba(51,26,30,.17);backdrop-filter:blur(4px)}
+.open-card-single h1{font:500 clamp(2.8rem,10vw,4.8rem)/.95 Georgia,serif;margin:.35rem 0 .8rem}
+
+</style>
+</head>
+<body>
+<input id="openToggle" type="checkbox" style="position:fixed;opacity:0;pointer-events:none">
+<div class="opening-single">
+  <div class="open-card-single">
+    <div class="xi">囍</div>
+    <div class="smallcaps">The Wedding of</div>
+    <h1>Steffen &amp; Nini</h1>
+    <div class="open-date">29 NOVEMBER 2026</div>
+    <div class="guest">Dear Family &amp; Friends</div>
+    <label class="btn" for="openToggle">Open Invitation</label>
+    <div style="margin-top:16px;font-size:.72rem;color:#f0e4d7">Family review preview — draft, not final.</div>
+  </div>
+</div>
+<main id="main" class="ready"><div style="background:#681E2A;color:#fff;text-align:center;padding:8px 14px;font-size:.75rem;letter-spacing:.08em">FAMILY REVIEW — DRAFT PREVIEW • NOT FINAL</div>
+  <section class="hero" id="top">
+    <div class="container">
+      <div class="brandmark">囍</div>
+      <div class="smallcaps">The Wedding of</div>
+      <h1>Steffen &amp; Nini</h1>
+      <div class="date">29 NOVEMBER 2026</div>
+      <div class="cn-date serif">二〇二六年十一月二十九日</div>
+      <div class="rule"></div>
+      <a class="btn" href="#" id="saveDate">📅 Save the Date</a>
+      <div class="review-note">Prewedding photos will replace the placeholders after the photo session.</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container quote">
+      <span class="cn">緣分讓我們相遇，愛讓我們同行。</span>
+      Fate brought us together, love keeps us walking side by side.
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="center">
+        <div class="section-kicker smallcaps">Counting down</div>
+        <h2 class="section-title">Until Our Forever Begins</h2>
+      </div>
+      <div class="panel countdown">
+        <div><b id="days">0</b><span>Days</span></div>
+        <div><b id="hours">0</b><span>Hours</span></div>
+        <div><b id="minutes">0</b><span>Minutes</span></div>
+        <div><b id="seconds">0</b><span>Seconds</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="center">
+        <div class="section-kicker smallcaps">Celebration</div>
+        <h2 class="section-title">Wedding Day</h2>
+      </div>
+      <div class="event-grid">
+        <article class="panel event">
+          <div class="smallcaps">Wedding Blessing Ceremony</div>
+          <h3>Vihara Prasadha Jinarakkhita</h3>
+          <p class="time">13.00 — Until Finished</p>
+          <p>Kembangan, Jakarta Barat</p>
+          <a class="btn secondary" href="https://share.google/AR6O9qOAJwotr2ACr" target="_blank" rel="noopener">View Location</a>
+        </article>
+        <article class="panel event">
+          <div class="smallcaps">Intimate Dinner Reception</div>
+          <h3>Grand Hyatt Jakarta — The Residence OnFive</h3>
+          <p class="time">19.00 — Until Finished</p>
+          <p>Central Jakarta</p>
+          <a class="btn secondary" href="https://share.google/KOap7PfO4PUaZZ24o" target="_blank" rel="noopener">View Location</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="center">
+        <div class="section-kicker smallcaps">Our Families</div>
+        <h2 class="section-title">Together with Our Families</h2>
+      </div>
+      <div class="family-grid">
+        <article class="panel family">
+          <div class="name">Steffen Khosasih</div>
+          <div class="cn serif">許家昌</div>
+          <p>First son of<br><b>Mr. Cheng Boen Ho (许文和)</b><br>&amp;<br><b>Mrs. Elly Abdi (周秀兰)</b></p>
+        </article>
+        <article class="panel family">
+          <div class="name">Nini</div>
+          <div class="cn serif">邓禾妮</div>
+          <p>Youngest daughter of<br><b>Mr. Then Bu Tjin (邓武真)</b><br>&amp;<br><b>Mrs. Liu Siu Kie (刘秀枝)</b></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container center">
+      <div class="section-kicker smallcaps">Our Story</div>
+      <h2 class="section-title">A Story We Chose Together</h2>
+      <div class="story">
+        What began as a simple meeting slowly became something more meaningful — a journey filled with laughter,
+        understanding, and countless moments that brought us closer.<br><br>
+        Through every season, we learned to choose one another, again and again.<br><br>
+        And now, with the people closest to our hearts beside us, we begin our next chapter together.
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="center">
+        <div class="section-kicker smallcaps">Prewedding</div>
+        <h2 class="section-title">Moments We Love</h2>
+      </div>
+      <div class="gallery">
+        <div class="photo tall">Editorial photo</div>
+        <div class="stack">
+          <div class="photo">Editorial photo</div>
+          <div class="photo">Editorial photo</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="center">
+        <div class="section-kicker smallcaps">Wishes</div>
+        <h2 class="section-title">Leave Us a Message</h2>
+      </div>
+      <div class="wishes">
+        <form class="panel wish-form" id="wishForm">
+          <label class="smallcaps">Name</label>
+          <input id="wishName" placeholder="Your name">
+          <label class="smallcaps">Message</label>
+          <textarea id="wishMessage" placeholder="Write your wishes for Steffen & Nini"></textarea>
+          <button class="btn" type="submit">Send Wishes</button>
+        </form>
+        <div class="panel wish-list" id="wishList">
+          <div class="wish"><b>Family Preview</b><div>Wishes submitted here are stored only in this prototype browser.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div>
+      <div class="smallcaps">Thank you</div>
+      <h2>Thank you for being part<br>of our story.</h2>
+      <div class="serif">Steffen &amp; Nini</div>
+      <div style="margin-top:10px;letter-spacing:.15em;font-size:.78rem">29 NOVEMBER 2026</div>
+      <div class="review-note" style="color:white;border-color:#efd6a2;background:rgba(255,255,255,.08)">Closing photo will be replaced with a final prewedding image.</div>
+    </div>
+  </section>
+</main>
+
+<button class="music" id="musicBtn" title="Music">♫</button>
+<a class="backtop" href="#top" title="Back to top">↑</a>
+<footer>S &amp; N • Private Wedding Invitation</footer>
+
+<script>
+const q=new URLSearchParams(location.search);
+const guest=q.get('guest')||q.get('to')||'Family & Friends';
+const seats=q.get('seats');
+if(q.get('review')==='family') document.body.classList.add('review');
+const wn=document.getElementById('wishName'); if(wn) wn.value=guest.replace(/^Mr\\. |^Mrs\\. |^Ms\\. /,'');
+
+const target=new Date('2026-11-29T13:00:00+07:00').getTime();
+function tick(){
+  let d=Math.max(0,target-Date.now());
+  const days=Math.floor(d/86400000); d%=86400000;
+  const hours=Math.floor(d/3600000); d%=3600000;
+  const minutes=Math.floor(d/60000); d%=60000;
+  const seconds=Math.floor(d/1000);
+  for(const [id,v] of Object.entries({days,hours,minutes,seconds})) document.getElementById(id).textContent=String(v).padStart(2,'0');
+}
+tick(); setInterval(tick,1000);
+
+document.getElementById('saveDate').onclick=(e)=>{
+  e.preventDefault();
+  const ics=`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Steffen & Nini//Wedding//EN
+BEGIN:VEVENT
+UID:steffen-nini-20261129
+DTSTAMP:20260924T000000Z
+DTSTART:20261129T060000Z
+DTEND:20261129T150000Z
+SUMMARY:The Wedding of Steffen & Nini
+DESCRIPTION:Wedding Blessing Ceremony at 13:00 WIB and Intimate Dinner Reception at 19:00 WIB.
+LOCATION:Jakarta, Indonesia
+END:VEVENT
+END:VCALENDAR`;
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='Steffen-Nini-29-November-2026.ics'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+};
+
+document.getElementById('wishForm').onsubmit=(e)=>{
+  e.preventDefault();
+  const n=document.getElementById('wishName').value.trim(), m=document.getElementById('wishMessage').value.trim();
+  if(!n||!m) return alert('Please fill in your name and message.');
+  const div=document.createElement('div'); div.className='wish';
+  const b=document.createElement('b'); b.textContent=n; div.appendChild(b);
+  const msg=document.createElement('div'); msg.textContent=m; div.appendChild(msg);
+  document.getElementById('wishList').prepend(div);
+  document.getElementById('wishMessage').value='';
+};
+
+let musicOn=false;
+document.getElementById('musicBtn').onclick=()=>{
+  musicOn=!musicOn;
+  document.getElementById('musicBtn').textContent=musicOn?'❚❚':'♫';
+  alert(musicOn
+    ? 'Music placeholder ON. Final version will use the approved audio source for Jay Chou — “I Do”.'
+    : 'Music paused.');
+};
+
+addEventListener('scroll',()=>document.body.classList.toggle('scrolled',scrollY>500));
+</script>
+</body>
+</html>
