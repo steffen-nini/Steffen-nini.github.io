@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#681E2A">
-<meta name="build" content="final-uiux-v5-1-safe-motion-2026-09-27">
+<meta name="build" content="final-uiux-v5-2-centered-cards-2026-09-27">
 <meta name="description" content="The Wedding of Steffen & Nini — 29 November 2026">
 <meta property="og:title" content="The Wedding of Steffen & Nini">
 <meta property="og:description" content="29 November 2026">
@@ -351,6 +351,7 @@ main{overflow:hidden}
 .event-grid{
   display:grid;
   padding-inline:2px;
+  overflow:visible;
   grid-template-columns:1fr 1fr;
   gap:18px;
   margin-top:32px;
@@ -403,6 +404,7 @@ main{overflow:hidden}
 .family-grid{
   display:grid;
   padding-inline:2px;
+  overflow:visible;
   grid-template-columns:1fr 1fr;
   gap:18px;
   margin-top:32px;
@@ -452,6 +454,7 @@ main{overflow:hidden}
 .wish-grid{
   display:grid;
   padding-inline:2px;
+  overflow:visible;
   grid-template-columns:.92fr 1.08fr;
   gap:18px;
   margin-top:32px;
@@ -705,23 +708,24 @@ footer{
 .countdown-card.reveal.visible .countdown-item:nth-child(3){transition-delay:.30s}
 .countdown-card.reveal.visible .countdown-item:nth-child(4){transition-delay:.40s}
 
-/* Cards enter with direction and more depth */
-.event-grid .event-card:nth-child(1).reveal,
-.family-grid .family-card:nth-child(1).reveal{
-  transform:translateX(-24px) translateY(22px) scale(.985);
+/* Cards stay centered: vertical depth + stagger, no horizontal clipping */
+.event-grid .event-card.reveal,
+.family-grid .family-card.reveal{
+  transform:translateY(38px) scale(.97);
+  transform-origin:center center;
+  transition:
+    opacity .78s ease,
+    transform .92s cubic-bezier(.16,.9,.18,1),
+    filter .78s ease;
 }
-.event-grid .event-card:nth-child(2).reveal,
-.family-grid .family-card:nth-child(2).reveal{
-  transform:translateX(24px) translateY(22px) scale(.985);
+.event-grid .event-card.reveal.visible,
+.family-grid .family-card.reveal.visible{
+  transform:translateY(0) scale(1);
 }
-.event-grid .event-card.visible,
-.family-grid .family-card.visible{
-  transform:none;
-}
-.event-card.reveal,
-.family-card.reveal{
-  transition-duration:.92s;
-}
+.event-grid .event-card:nth-child(1).reveal{transition-delay:.05s}
+.event-grid .event-card:nth-child(2).reveal{transition-delay:.16s}
+.family-grid .family-card:nth-child(1).reveal{transition-delay:.05s}
+.family-grid .family-card:nth-child(2).reveal{transition-delay:.16s}
 
 /* Story paragraphs arrive one after another */
 .story-wrap.reveal .story{
@@ -743,10 +747,16 @@ footer{
 .story-wrap.reveal.visible .story:nth-child(3){transition-delay:.44s}
 
 /* Wishes: form and board feel like separate layers */
-.wish-grid .wish-form.reveal{transform:translateX(-20px) translateY(24px) scale(.985)}
-.wish-grid .wish-board.reveal{transform:translateX(20px) translateY(24px) scale(.985)}
-.wish-grid .wish-form.visible,
-.wish-grid .wish-board.visible{transform:none}
+.wish-grid .wish-form.reveal,
+.wish-grid .wish-board.reveal{
+  transform:translateY(34px) scale(.975);
+}
+.wish-grid .wish-form.reveal.visible,
+.wish-grid .wish-board.reveal.visible{
+  transform:translateY(0) scale(1);
+}
+.wish-grid .wish-form.reveal{transition-delay:.05s}
+.wish-grid .wish-board.reveal{transition-delay:.16s}
 
 /* Closing lands with stronger emphasis */
 .closing .reveal{
@@ -777,22 +787,6 @@ footer{
 @media(max-width:720px){
   .container{width:min(100% - 28px,920px)}
 
-  /* Mobile-safe motion: keep cards fully inside the viewport */
-  .event-grid .event-card:nth-child(1).reveal,
-  .event-grid .event-card:nth-child(2).reveal,
-  .family-grid .family-card:nth-child(1).reveal,
-  .family-grid .family-card:nth-child(2).reveal,
-  .wish-grid .wish-form.reveal,
-  .wish-grid .wish-board.reveal{
-    transform:translateY(30px) scale(.985);
-  }
-
-  .event-grid .event-card.visible,
-  .family-grid .family-card.visible,
-  .wish-grid .wish-form.visible,
-  .wish-grid .wish-board.visible{
-    transform:none;
-  }
   .section{padding:70px 0}
   .section.compact{padding:56px 0}
   .gate-card{padding:36px 22px 32px}
