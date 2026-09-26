@@ -2,274 +2,806 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#681E2A">
+<meta name="description" content="The Wedding of Steffen & Nini — 29 November 2026">
+<meta property="og:title" content="The Wedding of Steffen & Nini">
+<meta property="og:description" content="29 November 2026">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://steffen-nini.github.io/">
 <title>The Wedding of Steffen & Nini</title>
+
 <style>
 :root{
-  --ivory:#F6F0E7; --champagne:#D8C3A5; --red:#9E2A2B; --taupe:#8A7565;
-  --deep:#681E2A; --ink:#352825; --paper:#FFFBF6;
+  --ivory:#F6F0E7;
+  --paper:#FFFBF6;
+  --champagne:#D8C3A5;
+  --gold:#CBAA78;
+  --red:#9E2A2B;
+  --deep:#681E2A;
+  --taupe:#8A7565;
+  --ink:#352825;
+  --line:#E4D3C2;
+  --shadow:0 20px 60px rgba(70,35,38,.08);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--ivory);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(216,195,165,.18),transparent 34rem),
+    var(--ivory);
+  color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body.locked{overflow:hidden}
+button,input,textarea{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+img{max-width:100%;display:block}
+::selection{background:rgba(158,42,43,.16)}
 
 .serif{font-family:Georgia,"Times New Roman",serif}
-.smallcaps{letter-spacing:.18em;text-transform:uppercase;font-size:.74rem}
-.review-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:100;background:var(--deep);color:white;text-align:center;padding:8px 16px;font-size:.76rem;letter-spacing:.08em}
-body.review .review-banner{display:block}
-body.review #opening{top:32px}
-#opening{
-  position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:24px;color:white;text-align:center;
-  background:
-    linear-gradient(180deg,rgba(38,18,22,.18),rgba(38,18,22,.64)),
-    radial-gradient(circle at 50% 24%,#cdb8aa 0,#9b7e73 36%,#4f3637 100%);
+.smallcaps{
+  font-size:.69rem;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
 }
-#opening:before{content:"";position:absolute;font-size:.7rem;letter-spacing:.25em;color:rgba(255,255,255,.2)}
-.open-card{position:relative;z-index:1;width:min(94vw,520px);padding:34px 24px;border:1px solid rgba(255,255,255,.33);background:rgba(51,26,30,.15);backdrop-filter:blur(4px)}
-.xi{font-family:"Times New Roman",serif;font-size:4.3rem;line-height:1;color:#ecd2a0;font-weight:700}
-.open-card h1{font:500 clamp(2.8rem,10vw,4.7rem)/.95 Georgia,serif;margin:.35rem 0 .75rem}
-.open-date{letter-spacing:.17em;font-size:.78rem}
-.guest{font:italic 1.18rem/1.5 Georgia,serif;margin:1.7rem 0 .25rem}
-.seats{font-size:.78rem;color:#f2e8db;margin:8px 0 1.4rem}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:999px;border:1px solid var(--champagne);background:var(--red);color:#fff;text-decoration:none;text-transform:uppercase;letter-spacing:.11em;font-weight:700;font-size:.72rem;cursor:pointer}
-.btn.secondary{background:transparent;color:var(--red)}
-main{opacity:1;transform:none}
-main.ready{opacity:1;transform:none}
-section{padding:78px 20px}
-.container{max-width:900px;margin:auto}
+.container{width:min(100% - 36px,920px);margin-inline:auto}
+.section{padding:88px 0}
+.section.compact{padding:64px 0}
 .center{text-align:center}
-.hero{padding-top:106px;text-align:center;position:relative}
-.brandmark{font-size:3.2rem;color:var(--red);line-height:1}
-.hero h1{font:500 clamp(3.1rem,9vw,6.6rem)/.95 Georgia,serif;color:var(--deep);margin:14px 0 18px}
-.hero .date{font-size:.92rem;letter-spacing:.17em}
-.hero .cn-date{margin-top:8px;color:var(--taupe)}
-.rule{width:70px;height:1px;background:var(--champagne);margin:26px auto}
-.quote{max-width:700px;margin:auto;text-align:center;font:italic 1.24rem/1.8 Georgia,serif}
-.quote .cn{font-style:normal;color:var(--red);display:block;font-size:1.35rem;margin-bottom:8px}
-.panel{border:1px solid #e8d7c4;background:rgba(255,255,255,.55);border-radius:28px;box-shadow:0 12px 40px rgba(73,40,39,.06)}
-.section-kicker{color:var(--red);margin-bottom:8px}
-.section-title{font:500 clamp(2rem,6vw,3rem)/1.08 Georgia,serif;color:var(--deep);margin:0 0 18px}
-.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:26px}
-.countdown div{text-align:center}
-.countdown b{display:block;font:500 2.1rem Georgia,serif;color:var(--red)}
-.countdown span{display:block;margin-top:7px;text-transform:uppercase;letter-spacing:.1em;font-size:.67rem;color:var(--taupe)}
-.event-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.event{padding:34px}
-.event h3{font:500 1.7rem Georgia,serif;color:var(--deep);margin:4px 0 12px}
-.event p{line-height:1.75;color:#66534e}
-.event .time{font-weight:700;color:var(--red)}
-.family-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
-.family{padding:30px;text-align:center}
-.family .name{font:500 1.8rem Georgia,serif;color:var(--deep)}
-.family .cn{color:var(--red);font-size:1.15rem;margin-top:3px}
-.family p{line-height:1.75}
-.story{max-width:700px;margin:auto;text-align:center;font:1.08rem/1.9 Georgia,serif}
-.gallery{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
-.photo{min-height:280px;border-radius:24px;background:linear-gradient(135deg,#d8c4b6,#a78b82);display:grid;place-items:center;color:rgba(255,255,255,.7);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;overflow:hidden}
-.photo.tall{min-height:574px}
-.stack{display:grid;gap:14px}
-.wishes{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px}
-.wish-form{padding:28px}
-input,textarea,select{width:100%;border:1px solid #dbc8b5;background:#fffdf9;border-radius:14px;padding:13px 14px;margin:7px 0 12px;font:inherit;color:var(--ink)}
-textarea{min-height:110px;resize:vertical}
-.wish-list{padding:28px}
-.wish{padding:16px 0;border-bottom:1px solid #eadbca}
-.wish:last-child{border-bottom:0}
-.wish b{font-family:Georgia,serif;color:var(--deep)}
-.closing{min-height:72vh;display:grid;place-items:center;text-align:center;color:white;background:linear-gradient(180deg,rgba(65,27,32,.45),rgba(65,27,32,.72)),radial-gradient(circle at 50% 30%,#bba69a,#68494b)}
-.closing h2{font:500 clamp(2.5rem,8vw,5rem)/1 Georgia,serif;margin:14px 0}
-.music{position:fixed;right:16px;bottom:16px;z-index:60;width:48px;height:48px;border-radius:50%;border:1px solid var(--champagne);background:var(--red);color:white;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 26px rgba(65,27,32,.18)}
-.backtop{position:fixed;left:16px;bottom:16px;z-index:60;width:42px;height:42px;border-radius:50%;border:1px solid #e2ccb6;background:#fffaf3;color:var(--red);display:none;place-items:center;text-decoration:none}
-body.scrolled .backtop{display:grid}
-footer{padding:28px 18px;text-align:center;color:var(--taupe);font-size:.76rem}
-.review-note{display:none;margin:18px auto 0;max-width:640px;border:1px dashed var(--red);border-radius:16px;padding:12px 14px;color:var(--red);background:#fff8f2;font-size:.82rem}
-body.review .review-note{display:block}
+.section-kicker{color:var(--red);margin-bottom:10px}
+.section-title{
+  margin:0;
+  color:var(--deep);
+  font:500 clamp(2.15rem,6vw,3.35rem)/1.06 Georgia,"Times New Roman",serif;
+  letter-spacing:-.025em;
+}
+.section-sub{
+  max-width:640px;
+  margin:16px auto 0;
+  color:#715E57;
+  font-size:.96rem;
+  line-height:1.8;
+}
+.ornament{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:11px;
+  width:150px;
+  margin:24px auto 0;
+  color:var(--gold);
+}
+.ornament:before,.ornament:after{
+  content:"";
+  width:46px;
+  height:1px;
+  background:currentColor;
+}
+.ornament span{font:700 1rem Georgia,serif}
+
+/* Buttons */
+.btn{
+  min-height:46px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border-radius:999px;
+  border:1px solid var(--red);
+  padding:12px 20px;
+  background:var(--red);
+  color:#fff;
+  text-decoration:none;
+  font-size:.7rem;
+  font-weight:800;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(104,30,42,.14)}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible{
+  outline:3px solid rgba(158,42,43,.22);
+  outline-offset:3px;
+}
+.btn.secondary{background:transparent;color:var(--red);border-color:#CFAE91}
+.btn:disabled{opacity:.55;cursor:wait;transform:none;box-shadow:none}
+
+/* Opening gate */
+.gate{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  min-height:100svh;
+  padding:
+    max(18px,env(safe-area-inset-top))
+    18px
+    max(18px,env(safe-area-inset-bottom));
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  color:#fff;
+  text-align:center;
+  background:
+    linear-gradient(155deg,rgba(95,24,34,.96),rgba(52,18,25,.98));
+  transition:opacity .55s ease,visibility .55s ease;
+}
+.gate:before,.gate:after{
+  content:"";
+  position:absolute;
+  width:72vw;
+  height:72vw;
+  max-width:600px;
+  max-height:600px;
+  border:1px solid rgba(216,195,165,.14);
+  border-radius:50%;
+}
+.gate:before{top:-36vw;right:-25vw}
+.gate:after{bottom:-38vw;left:-30vw}
+.gate.dismissed{opacity:0;visibility:hidden;pointer-events:none}
+.gate-card{
+  position:relative;
+  z-index:1;
+  width:min(100%,520px);
+  padding:42px 28px 38px;
+  border:1px solid rgba(232,209,175,.34);
+  background:rgba(92,29,38,.18);
+  box-shadow:0 28px 90px rgba(20,5,8,.22);
+  backdrop-filter:blur(5px);
+}
+.gate-card:before,.gate-card:after{
+  content:"";
+  position:absolute;
+  width:32px;height:32px;
+  border-color:rgba(232,209,175,.62);
+}
+.gate-card:before{top:11px;left:11px;border-top:1px solid;border-left:1px solid}
+.gate-card:after{right:11px;bottom:11px;border-right:1px solid;border-bottom:1px solid}
+.xi{
+  color:#E5C995;
+  font:700 4.4rem/1 "Times New Roman",serif;
+  text-shadow:0 8px 30px rgba(0,0,0,.12);
+}
+.gate-title{
+  margin:12px 0 8px;
+  font:500 clamp(2.9rem,11vw,4.85rem)/.94 Georgia,"Times New Roman",serif;
+  letter-spacing:-.045em;
+}
+.gate-date{font-size:.72rem;letter-spacing:.2em}
+.gate-divider{
+  width:46px;height:1px;background:rgba(229,201,149,.72);
+  margin:25px auto;
+}
+.guest-greeting{
+  margin:0 0 7px;
+  font:italic 1.18rem/1.55 Georgia,serif;
+  color:#FFF9F1;
+}
+.seat-line{
+  min-height:20px;
+  margin:0 0 24px;
+  color:#EEDFD3;
+  font-size:.79rem;
+  line-height:1.55;
+}
+.gate .btn{
+  background:#F6F0E7;
+  border-color:#F6F0E7;
+  color:var(--deep);
+  min-width:190px;
+}
+
+/* Invalid invitation */
+.invalid{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:1100;
+  min-height:100svh;
+  place-items:center;
+  padding:24px;
+  text-align:center;
+  background:var(--ivory);
+}
+.invalid.show{display:grid}
+.invalid .xi{color:var(--red)}
+.invalid h2{
+  margin:14px 0 8px;
+  color:var(--deep);
+  font:500 2.1rem/1.1 Georgia,serif;
+}
+.invalid p{color:var(--taupe);line-height:1.7}
+
+/* Main / hero */
+main{overflow:hidden}
+.hero{
+  position:relative;
+  padding:112px 0 94px;
+  text-align:center;
+}
+.hero:before{
+  content:"";
+  position:absolute;
+  left:50%;top:36px;
+  width:min(86vw,720px);
+  height:1px;
+  transform:translateX(-50%);
+  background:linear-gradient(90deg,transparent,var(--champagne),transparent);
+}
+.hero-mark{color:var(--red);font:700 3.5rem/1 "Times New Roman",serif}
+.hero-monogram{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  margin:18px 0 5px;
+  color:var(--taupe);
+  font:italic 1rem Georgia,serif;
+}
+.hero-monogram:before,.hero-monogram:after{
+  content:"";
+  width:28px;height:1px;background:var(--champagne)
+}
+.hero h1{
+  margin:12px 0 18px;
+  color:var(--deep);
+  font:500 clamp(3.45rem,10vw,6.75rem)/.9 Georgia,serif;
+  letter-spacing:-.055em;
+}
+.hero-date{font-size:.76rem;font-weight:800;letter-spacing:.2em}
+.hero-cn{margin-top:8px;color:var(--taupe);font-size:1rem}
+.hero-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+
+.personal-note{
+  width:min(100% - 36px,700px);
+  margin:0 auto 12px;
+  padding:18px 22px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,251,246,.72);
+  box-shadow:var(--shadow);
+  text-align:center;
+}
+.personal-note strong{
+  display:block;
+  color:var(--deep);
+  font:500 1.16rem/1.35 Georgia,serif;
+}
+.personal-note span{
+  display:block;
+  margin-top:5px;
+  color:var(--taupe);
+  font-size:.79rem;
+}
+
+/* Quote band */
+.quote-band{
+  position:relative;
+  background:var(--deep);
+  color:#FFF9F1;
+}
+.quote-band:before{
+  content:"囍";
+  position:absolute;
+  right:5vw;
+  top:50%;
+  transform:translateY(-50%);
+  color:rgba(255,255,255,.035);
+  font:700 clamp(8rem,23vw,16rem)/1 "Times New Roman",serif;
+}
+.quote{
+  position:relative;
+  z-index:1;
+  max-width:720px;
+  margin:auto;
+  text-align:center;
+  font:italic 1.22rem/1.85 Georgia,serif;
+}
+.quote-cn{
+  display:block;
+  margin-bottom:8px;
+  color:#E8CFA1;
+  font-style:normal;
+  font-size:1.34rem;
+}
+
+/* Countdown */
+.countdown-card{
+  margin-top:30px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+  border:1px solid var(--line);
+  border-radius:24px;
+  overflow:hidden;
+  background:rgba(255,251,246,.78);
+  box-shadow:var(--shadow);
+}
+.countdown-item{padding:27px 10px;text-align:center;position:relative}
+.countdown-item:not(:last-child):after{
+  content:"";
+  position:absolute;
+  top:25%;right:0;
+  width:1px;height:50%;
+  background:var(--line);
+}
+.countdown-item b{
+  display:block;
+  color:var(--red);
+  font:500 clamp(1.8rem,6vw,2.4rem)/1 Georgia,serif;
+}
+.countdown-item span{
+  display:block;
+  margin-top:8px;
+  color:var(--taupe);
+  font-size:.61rem;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+/* Event */
+.event-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-top:32px;
+}
+.card{
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:rgba(255,251,246,.74);
+  box-shadow:var(--shadow);
+}
+.event-card{
+  position:relative;
+  padding:32px;
+  overflow:hidden;
+}
+.event-card:after{
+  content:"";
+  position:absolute;
+  top:-38px;right:-38px;
+  width:100px;height:100px;
+  border:1px solid rgba(203,170,120,.28);
+  border-radius:50%;
+}
+.event-num{
+  color:var(--gold);
+  font:italic 1rem Georgia,serif;
+}
+.event-label{color:var(--red);margin-top:18px}
+.event-card h3{
+  margin:8px 0 16px;
+  color:var(--deep);
+  font:500 1.75rem/1.15 Georgia,serif;
+}
+.event-time{
+  margin:0;
+  color:var(--red);
+  font-weight:800;
+  font-size:.9rem;
+}
+.event-place{
+  min-height:52px;
+  margin:7px 0 23px;
+  color:#6D5952;
+  line-height:1.6;
+}
+.event-card .btn{width:100%}
+
+/* Families */
+.family-section{background:rgba(255,251,246,.42)}
+.family-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-top:32px;
+}
+.family-card{padding:32px;text-align:center}
+.family-name{
+  color:var(--deep);
+  font:500 1.9rem/1.15 Georgia,serif;
+}
+.family-cn{
+  margin-top:5px;
+  color:var(--red);
+  font:1.15rem Georgia,serif;
+}
+.family-role{
+  margin:18px 0 10px;
+  color:var(--taupe);
+  font-size:.77rem;
+  font-weight:800;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+.parent{
+  line-height:1.8;
+  font-size:.94rem;
+}
+.parent strong{color:#533D37}
+
+/* Story */
+.story-wrap{
+  max-width:730px;
+  margin:30px auto 0;
+  position:relative;
+  padding:36px 34px;
+  border-top:1px solid var(--champagne);
+  border-bottom:1px solid var(--champagne);
+  text-align:center;
+}
+.story{
+  margin:0;
+  font:1.06rem/1.95 Georgia,serif;
+  color:#594640;
+}
+.story + .story{margin-top:17px}
+
+/* Wishes */
+.wish-grid{
+  display:grid;
+  grid-template-columns:.92fr 1.08fr;
+  gap:18px;
+  margin-top:32px;
+  align-items:start;
+}
+.wish-form,.wish-board{padding:28px}
+.form-label{
+  display:block;
+  margin:0 0 7px;
+  color:var(--taupe);
+  font-size:.65rem;
+  font-weight:800;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+input,textarea{
+  width:100%;
+  border:1px solid #D9C5B2;
+  border-radius:13px;
+  background:#FFFDF9;
+  color:var(--ink);
+  padding:13px 14px;
+  margin:0 0 15px;
+  font-size:16px; /* prevents iOS zoom */
+}
+textarea{min-height:120px;resize:vertical;line-height:1.55}
+.char-count{
+  margin:-7px 2px 15px;
+  text-align:right;
+  color:var(--taupe);
+  font-size:.68rem;
+}
+.wish-form .btn{width:100%}
+.form-status{min-height:18px;margin:12px 2px 0;color:var(--red);font-size:.75rem;line-height:1.5}
+.wish{
+  padding:16px 0;
+  border-bottom:1px solid #EADCCF;
+}
+.wish:first-child{padding-top:2px}
+.wish:last-child{border-bottom:0;padding-bottom:2px}
+.wish-name{
+  color:var(--deep);
+  font:600 1rem Georgia,serif;
+}
+.wish-message{margin-top:5px;color:#66534D;line-height:1.65;font-size:.91rem}
+.show-more{
+  width:100%;
+  margin-top:18px;
+  border:0;
+  background:transparent;
+  color:var(--red);
+  font-weight:800;
+  font-size:.7rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+
+/* Closing */
+.closing{
+  position:relative;
+  min-height:72svh;
+  display:grid;
+  place-items:center;
+  padding:82px 24px;
+  overflow:hidden;
+  text-align:center;
+  color:#FFF9F1;
+  background:
+    radial-gradient(circle at 50% 28%,rgba(213,184,141,.13),transparent 24rem),
+    linear-gradient(155deg,#7E2731,#42131D);
+}
+.closing:before,.closing:after{
+  content:"";
+  position:absolute;
+  width:280px;height:280px;
+  border:1px solid rgba(229,201,149,.14);
+  transform:rotate(45deg);
+}
+.closing:before{top:-185px;left:-140px}
+.closing:after{right:-150px;bottom:-195px}
+.closing-inner{position:relative;z-index:1}
+.closing-monogram{
+  margin-bottom:18px;
+  color:#E5C995;
+  font:italic 1.15rem Georgia,serif;
+}
+.closing h2{
+  margin:12px 0 20px;
+  font:500 clamp(2.55rem,8vw,5rem)/1 Georgia,serif;
+  letter-spacing:-.035em;
+}
+.closing-date{margin-top:12px;font-size:.72rem;letter-spacing:.18em}
+
+/* Utility */
+.backtop{
+  position:fixed;
+  right:16px;
+  bottom:max(16px,env(safe-area-inset-bottom));
+  z-index:80;
+  width:44px;height:44px;
+  display:grid;
+  place-items:center;
+  border:1px solid #D8C2AD;
+  border-radius:50%;
+  background:#FFF9F3;
+  color:var(--red);
+  text-decoration:none;
+  box-shadow:0 10px 28px rgba(61,31,31,.1);
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(8px);
+  transition:.22s ease;
+}
+body.scrolled .backtop{opacity:1;visibility:visible;transform:none}
+footer{
+  padding:24px 18px calc(24px + env(safe-area-inset-bottom));
+  text-align:center;
+  color:var(--taupe);
+  font-size:.72rem;
+  letter-spacing:.06em;
+}
+.reveal{
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity .65s ease,transform .65s ease;
+}
+.reveal.visible{opacity:1;transform:none}
+
 @media(max-width:720px){
-  section{padding:64px 18px}
-  .event-grid,.family-grid,.wishes,.gallery{grid-template-columns:1fr}
-  .photo.tall{min-height:420px}
-  .countdown{padding:20px 12px}
-  .event,.family,.wish-form,.wish-list{padding:24px}
+  .container{width:min(100% - 28px,920px)}
+  .section{padding:70px 0}
+  .section.compact{padding:56px 0}
+  .gate-card{padding:36px 22px 32px}
+  .hero{padding:88px 0 72px}
+  .hero h1{font-size:clamp(3.25rem,17vw,5.2rem)}
+  .personal-note{width:calc(100% - 28px)}
+  .countdown-card{border-radius:20px}
+  .countdown-item{padding:22px 5px}
+  .countdown-item b{font-size:1.72rem}
+  .event-grid,.family-grid,.wish-grid{grid-template-columns:1fr}
+  .event-place{min-height:0}
+  .event-card,.family-card,.wish-form,.wish-board{padding:24px}
+  .story-wrap{padding:30px 6px}
+  .quote{font-size:1.08rem}
+  .quote-cn{font-size:1.19rem}
+  .closing{min-height:68svh}
 }
-
-#openToggle:not(:checked) ~ main{display:none}
-#openToggle:checked + .opening-single{display:none}
-.opening-single{
-  position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:24px;color:white;text-align:center;
-  background:linear-gradient(180deg,rgba(38,18,22,.18),rgba(38,18,22,.68)),
-  radial-gradient(circle at 50% 24%,#cdb8aa 0,#9b7e73 36%,#4f3637 100%);
+@media(max-width:390px){
+  .countdown-item b{font-size:1.5rem}
+  .countdown-item span{font-size:.55rem;letter-spacing:.08em}
+  .btn{padding-inline:17px}
 }
-.opening-single:before{content:"";position:absolute;font-size:.7rem;letter-spacing:.25em;color:rgba(255,255,255,.18)}
-.open-card-single{position:relative;z-index:1;width:min(94vw,520px);padding:36px 24px;border:1px solid rgba(255,255,255,.35);background:rgba(51,26,30,.17);backdrop-filter:blur(4px)}
-.open-card-single h1{font:500 clamp(2.8rem,10vw,4.8rem)/.95 Georgia,serif;margin:.35rem 0 .8rem}
-
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*:before,*:after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
 </style>
 </head>
-<body>
-<div id="invalidInvitation" style="display:none;position:fixed;inset:0;z-index:999;background:#F6F0E7;place-items:center;text-align:center;padding:24px">
+
+<body class="locked">
+<div class="invalid" id="invalidInvitation" role="alert">
   <div>
-    <div style="font:700 4rem 'Times New Roman',serif;color:#9E2A2B">囍</div>
-    <h2 style="font:500 2rem Georgia,serif;color:#681E2A;margin:12px 0">Invitation not found</h2>
-    <p style="color:#8A7565">Please open the personal invitation link that was sent to you.</p>
+    <div class="xi">囍</div>
+    <h2>Invitation not found</h2>
+    <p>Please open the personal invitation link that was sent to you.</p>
   </div>
 </div>
-<input id="openToggle" type="checkbox" style="position:fixed;opacity:0;pointer-events:none">
-<div class="opening-single">
-  <div class="open-card-single">
+
+<div class="gate" id="gate">
+  <div class="gate-card">
     <div class="xi">囍</div>
     <div class="smallcaps">The Wedding of</div>
-    <h1>Steffen &amp; Nini</h1>
-    <div class="open-date">29 NOVEMBER 2026</div>
-    <div class="guest" id="guestGreeting">Loading invitation...</div>
-    <div class="seats" id="seatLine"></div>
-    <label class="btn" for="openToggle">Open Invitation</label>
+    <div class="gate-title">Steffen &amp; Nini</div>
+    <div class="gate-date">29 NOVEMBER 2026</div>
+    <div class="gate-divider"></div>
+    <p class="guest-greeting" id="guestGreeting">Preparing your invitation…</p>
+    <p class="seat-line" id="seatLine"></p>
+    <button class="btn" id="openInvitation" type="button" disabled>Preparing…</button>
   </div>
 </div>
-<main id="main" class="ready">
-  <section class="hero" id="top">
-    <div class="container">
-      <div class="brandmark">囍</div>
+
+<main id="main">
+  <section class="hero" id="top" tabindex="-1">
+    <div class="container reveal">
+      <div class="hero-mark">囍</div>
+      <div class="hero-monogram">S &amp; N</div>
       <div class="smallcaps">The Wedding of</div>
       <h1>Steffen &amp; Nini</h1>
-      <div class="date">29 NOVEMBER 2026</div>
-      <div class="cn-date serif">二〇二六年十一月二十九日</div>
-      <div class="rule"></div>
-      <a class="btn" href="#" id="saveDate">📅 Save the Date</a>
+      <div class="hero-date">29 NOVEMBER 2026</div>
+      <div class="hero-cn serif">二〇二六年十一月二十九日</div>
+      <div class="hero-actions">
+        <a class="btn" href="#" id="saveDate">Save the Date</a>
+        <a class="btn secondary" href="#wedding-day">Wedding Details</a>
+      </div>
     </div>
   </section>
 
-  <section>
-    <div class="container quote">
-      <span class="cn">緣分讓我們相遇，愛讓我們同行。</span>
+  <div class="personal-note reveal">
+    <strong id="mainGuestGreeting">Dear Guest</strong>
+    <span id="mainSeatLine"></span>
+  </div>
+
+  <section class="section compact quote-band">
+    <div class="container quote reveal">
+      <span class="quote-cn">緣分讓我們相遇，愛讓我們同行。</span>
       Fate brought us together, love keeps us walking side by side.
     </div>
   </section>
 
-  <section>
+  <section class="section">
     <div class="container">
-      <div class="center">
-        <div class="section-kicker smallcaps">Counting down</div>
+      <div class="center reveal">
+        <div class="section-kicker smallcaps">Counting Down</div>
         <h2 class="section-title">Until Our Forever Begins</h2>
+        <div class="ornament"><span>◆</span></div>
       </div>
-      <div class="panel countdown">
-        <div><b id="days">0</b><span>Days</span></div>
-        <div><b id="hours">0</b><span>Hours</span></div>
-        <div><b id="minutes">0</b><span>Minutes</span></div>
-        <div><b id="seconds">0</b><span>Seconds</span></div>
+      <div class="countdown-card reveal">
+        <div class="countdown-item"><b id="days">00</b><span>Days</span></div>
+        <div class="countdown-item"><b id="hours">00</b><span>Hours</span></div>
+        <div class="countdown-item"><b id="minutes">00</b><span>Minutes</span></div>
+        <div class="countdown-item"><b id="seconds">00</b><span>Seconds</span></div>
       </div>
     </div>
   </section>
 
-  <section>
+  <section class="section" id="wedding-day">
     <div class="container">
-      <div class="center">
+      <div class="center reveal">
         <div class="section-kicker smallcaps">Celebration</div>
         <h2 class="section-title">Wedding Day</h2>
+        <p class="section-sub">We would be honored to celebrate this meaningful day with the people closest to our hearts.</p>
+        <div class="ornament"><span>◆</span></div>
       </div>
+
       <div class="event-grid">
-        <article class="panel event">
-          <div class="smallcaps">Wedding Blessing Ceremony</div>
+        <article class="card event-card reveal">
+          <div class="event-num">01</div>
+          <div class="event-label smallcaps">Wedding Blessing Ceremony</div>
           <h3>Vihara Prasadha Jinarakkhita</h3>
-          <p class="time">13.00 — Until Finished</p>
-          <p>Kembangan, Jakarta Barat</p>
-          <a class="btn secondary" href="https://share.google/AR6O9qOAJwotr2ACr" target="_blank" rel="noopener">View Location</a>
+          <p class="event-time">13.00 WIB — onwards</p>
+          <p class="event-place">Kembangan, West Jakarta</p>
+          <a class="btn secondary" href="https://share.google/AR6O9qOAJwotr2ACr" target="_blank" rel="noopener noreferrer">View Location</a>
         </article>
-        <article class="panel event">
-          <div class="smallcaps">Intimate Dinner Reception</div>
-          <h3>Grand Hyatt Jakarta — The Residence OnFive</h3>
-          <p class="time">19.00 — Until Finished</p>
-          <p>Central Jakarta</p>
-          <a class="btn secondary" href="https://share.google/KOap7PfO4PUaZZ24o" target="_blank" rel="noopener">View Location</a>
+
+        <article class="card event-card reveal">
+          <div class="event-num">02</div>
+          <div class="event-label smallcaps">Intimate Dinner Reception</div>
+          <h3>Grand Hyatt Jakarta<br>The Residence OnFive</h3>
+          <p class="event-time">19.00 WIB — onwards</p>
+          <p class="event-place">Central Jakarta</p>
+          <a class="btn secondary" href="https://share.google/KOap7PfO4PUaZZ24o" target="_blank" rel="noopener noreferrer">View Location</a>
         </article>
       </div>
     </div>
   </section>
 
-  <section>
+  <section class="section family-section">
     <div class="container">
-      <div class="center">
+      <div class="center reveal">
         <div class="section-kicker smallcaps">Our Families</div>
         <h2 class="section-title">Together with Our Families</h2>
+        <div class="ornament"><span>◆</span></div>
       </div>
+
       <div class="family-grid">
-        <article class="panel family">
-          <div class="name">Steffen Khosasih</div>
-          <div class="cn serif">許家昌</div>
-          <p>First son of<br><b>Mr. Cheng Boen Ho (许文和)</b><br>&amp;<br><b>Mrs. Elly Abdi (周秀兰)</b></p>
+        <article class="card family-card reveal">
+          <div class="family-name">Steffen Khosasih</div>
+          <div class="family-cn">許家昌</div>
+          <div class="family-role">First Son of</div>
+          <div class="parent">
+            <strong>Mr. Cheng Boen Ho (许文和)</strong><br>
+            &amp;<br>
+            <strong>Mrs. Elly Abdi (周秀兰)</strong>
+          </div>
         </article>
-        <article class="panel family">
-          <div class="name">Nini</div>
-          <div class="cn serif">邓禾妮</div>
-          <p>Youngest daughter of<br><b>Mr. Then Bu Tjin (邓武真)</b><br>&amp;<br><b>Mrs. Liu Siu Kie (刘秀枝)</b></p>
+
+        <article class="card family-card reveal">
+          <div class="family-name">Nini</div>
+          <div class="family-cn">邓禾妮</div>
+          <div class="family-role">Youngest Daughter of</div>
+          <div class="parent">
+            <strong>Mr. Then Bu Tjin (邓武真)</strong><br>
+            &amp;<br>
+            <strong>Mrs. Liu Siu Kie (刘秀枝)</strong>
+          </div>
         </article>
       </div>
     </div>
   </section>
 
-  <section>
-    <div class="container center">
-      <div class="section-kicker smallcaps">Our Story</div>
-      <h2 class="section-title">A Story We Chose Together</h2>
-      <div class="story">
-        What began as a simple meeting slowly became something more meaningful — a journey filled with laughter,
-        understanding, and countless moments that brought us closer.<br><br>
-        Through every season, we learned to choose one another, again and again.<br><br>
-        And now, with the people closest to our hearts beside us, we begin our next chapter together.
+  <section class="section">
+    <div class="container">
+      <div class="center reveal">
+        <div class="section-kicker smallcaps">Our Story</div>
+        <h2 class="section-title">A Story We Chose Together</h2>
+        <div class="ornament"><span>◆</span></div>
+      </div>
+      <div class="story-wrap reveal">
+        <p class="story">What began as a simple meeting slowly became something more meaningful — a journey filled with laughter, understanding, and countless moments that brought us closer.</p>
+        <p class="story">Through every season, we learned to choose one another, again and again.</p>
+        <p class="story">And now, with the people closest to our hearts beside us, we begin our next chapter together.</p>
       </div>
     </div>
   </section>
 
-  <section>
+  <section class="section" id="wishes-section">
     <div class="container">
-      <div class="center">
-        <div class="section-kicker smallcaps">Prewedding</div>
-        <h2 class="section-title">Moments We Love</h2>
-      </div>
-      <div class="gallery">
-        <div class="photo tall"></div>
-        <div class="stack">
-          <div class="photo"></div>
-          <div class="photo"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <div class="center">
+      <div class="center reveal">
         <div class="section-kicker smallcaps">Wishes</div>
         <h2 class="section-title">Leave Us a Message</h2>
+        <p class="section-sub">Your warm wishes will become part of the memories we carry into this new chapter.</p>
+        <div class="ornament"><span>◆</span></div>
       </div>
-      <div class="wishes">
-        <form class="panel wish-form" id="wishForm">
-          <label class="smallcaps">Name</label>
-          <input id="wishName" placeholder="Your name">
-          <label class="smallcaps">Message</label>
-          <textarea id="wishMessage" placeholder="Write your wishes for Steffen & Nini"></textarea>
-          <button class="btn" type="submit">Send Wishes</button>
+
+      <div class="wish-grid">
+        <form class="card wish-form reveal" id="wishForm">
+          <label class="form-label" for="wishName">Name</label>
+          <input id="wishName" maxlength="80" required autocomplete="name" placeholder="Your name">
+
+          <label class="form-label" for="wishMessage">Message</label>
+          <textarea id="wishMessage" maxlength="500" required placeholder="Write your wishes for Steffen & Nini"></textarea>
+          <div class="char-count"><span id="wishCount">0</span>/500</div>
+
+          <button class="btn" id="wishSubmit" type="submit">Send Wishes</button>
+          <div class="form-status" id="wishStatus" aria-live="polite"></div>
         </form>
-        <div class="panel wish-list" id="wishList">
-          <div class="wish"><b>Loading wishes...</b></div>
+
+        <div class="card wish-board reveal">
+          <div id="wishList" aria-live="polite">
+            <div class="wish">
+              <div class="wish-name">Loading wishes…</div>
+            </div>
+          </div>
+          <button class="show-more" id="showMoreWishes" type="button" hidden>Show More Wishes</button>
         </div>
       </div>
     </div>
   </section>
 
   <section class="closing">
-    <div>
-      <div class="smallcaps">Thank you</div>
+    <div class="closing-inner reveal">
+      <div class="closing-monogram">S &amp; N · 囍</div>
+      <div class="smallcaps">Thank You</div>
       <h2>Thank you for being part<br>of our story.</h2>
       <div class="serif">Steffen &amp; Nini</div>
-      <div style="margin-top:10px;letter-spacing:.15em;font-size:.78rem">29 NOVEMBER 2026</div>
+      <div class="closing-date">29 NOVEMBER 2026</div>
     </div>
   </section>
 </main>
 
-<button class="music" id="musicBtn" title="Music" style="display:none">♫</button>
-<a class="backtop" href="#top" title="Back to top">↑</a>
-<footer>S &amp; N • Private Wedding Invitation</footer>
+<a class="backtop" href="#top" aria-label="Back to top">↑</a>
+<footer>S &amp; N · Private Wedding Invitation</footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -290,9 +822,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const params = new URLSearchParams(location.search);
 const code = params.get("i");
+const $ = id => document.getElementById(id);
 
-const $ = (id) => document.getElementById(id);
 let invitation = null;
+let allWishes = [];
+let wishesVisible = 6;
+let openTracked = false;
 
 function esc(v){
   return String(v ?? "").replace(/[&<>"']/g, m => ({
@@ -300,143 +835,228 @@ function esc(v){
   }[m]));
 }
 
+function showInvalid(){
+  $("invalidInvitation").classList.add("show");
+  document.body.classList.add("locked");
+}
+
 async function loadInvitation(){
   if(!code){
-    $("invalidInvitation").style.display = "grid";
+    showInvalid();
     return;
   }
 
   try{
-    const snap = await getDoc(doc(db, "invitations", code));
+    const snap = await getDoc(doc(db,"invitations",code));
     if(!snap.exists()) throw new Error("not-found");
 
     invitation = snap.data();
-
-    $("guestGreeting").textContent = "Dear " + invitation.invitationName;
-    $("seatLine").textContent = invitation.seats
-      ? `We have reserved ${invitation.seats} seat${invitation.seats > 1 ? "s" : ""} in your honor.`
+    const guestName = invitation.invitationName || "Guest";
+    const seats = Number(invitation.seats || 0);
+    const seatText = seats
+      ? `We have reserved ${seats} seat${seats > 1 ? "s" : ""} in your honor.`
       : "";
 
-    const wn = $("wishName");
-    if(wn) wn.value = invitation.invitationName;
+    $("guestGreeting").textContent = `Dear ${guestName}`;
+    $("seatLine").textContent = seatText;
+    $("mainGuestGreeting").textContent = `Dear ${guestName}`;
+    $("mainSeatLine").textContent = seatText;
 
-    // Record one open event per page load.
-    await addDoc(collection(db, "openEvents"), {
-      code,
-      createdAt: serverTimestamp()
-    });
+    $("wishName").value = guestName;
+    $("openInvitation").disabled = false;
+    $("openInvitation").textContent = "Open Invitation";
 
     await loadWishes();
   }catch(err){
     console.error(err);
-    $("invalidInvitation").style.display = "grid";
+    showInvalid();
   }
+}
+
+async function trackOpenOnce(){
+  if(openTracked || !code) return;
+  const key = `wedding-open:${code}`;
+
+  try{
+    if(sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key,"1");
+  }catch(err){
+    console.warn("Session storage unavailable:",err);
+  }
+
+  openTracked = true;
+  addDoc(collection(db,"openEvents"),{
+    code,
+    createdAt:serverTimestamp()
+  }).catch(err => {
+    console.warn("Open tracking failed:",err);
+    try{ sessionStorage.removeItem(key); }catch(_){ }
+    openTracked = false;
+  });
+}
+
+$("openInvitation").addEventListener("click",()=>{
+  trackOpenOnce();
+  $("gate").classList.add("dismissed");
+  $("gate").setAttribute("aria-hidden","true");
+  document.body.classList.remove("locked");
+  setTimeout(()=>document.querySelector(".hero")?.focus(),560);
+});
+
+function renderWishes(){
+  const list = $("wishList");
+  const visible = allWishes.slice(0,wishesVisible);
+
+  if(!visible.length){
+    list.innerHTML = `
+      <div class="wish">
+        <div class="wish-name">No wishes yet.</div>
+        <div class="wish-message">Be the first to leave a message.</div>
+      </div>`;
+  }else{
+    list.innerHTML = visible.map(w => `
+      <div class="wish">
+        <div class="wish-name">${esc(w.name)}</div>
+        <div class="wish-message">${esc(w.message)}</div>
+      </div>`).join("");
+  }
+
+  $("showMoreWishes").hidden = wishesVisible >= allWishes.length;
 }
 
 async function loadWishes(){
   try{
-    const snap = await getDocs(query(collection(db, "wishes"), orderBy("createdAt", "desc")));
-    const list = $("wishList");
-    list.innerHTML = snap.docs.length
-      ? snap.docs.map(d => {
-          const w = d.data();
-          return `<div class="wish"><b>${esc(w.name)}</b><div>${esc(w.message)}</div></div>`;
-        }).join("")
-      : '<div class="wish"><b>No wishes yet.</b><div>Be the first to leave a message.</div></div>';
+    const snap = await getDocs(query(collection(db,"wishes"),orderBy("createdAt","desc")));
+    allWishes = snap.docs.map(d => d.data());
+    renderWishes();
   }catch(err){
     console.error(err);
-    $("wishList").innerHTML = '<div class="wish"><b>Unable to load wishes.</b></div>';
+    $("wishList").innerHTML = `
+      <div class="wish">
+        <div class="wish-name">Unable to load wishes.</div>
+        <div class="wish-message">Please try again later.</div>
+      </div>`;
+    $("showMoreWishes").hidden = true;
   }
 }
 
-// Countdown
+$("showMoreWishes").addEventListener("click",()=>{
+  wishesVisible += 6;
+  renderWishes();
+});
+
 const target = new Date("2026-11-29T13:00:00+07:00").getTime();
 function tick(){
-  let d = Math.max(0, target - Date.now());
-  const days = Math.floor(d / 86400000); d %= 86400000;
-  const hours = Math.floor(d / 3600000); d %= 3600000;
-  const minutes = Math.floor(d / 60000); d %= 60000;
-  const seconds = Math.floor(d / 1000);
+  let delta = Math.max(0,target-Date.now());
+  const days = Math.floor(delta/86400000); delta%=86400000;
+  const hours = Math.floor(delta/3600000); delta%=3600000;
+  const minutes = Math.floor(delta/60000); delta%=60000;
+  const seconds = Math.floor(delta/1000);
 
-  for(const [id, value] of Object.entries({days, hours, minutes, seconds})){
+  for(const [id,value] of Object.entries({days,hours,minutes,seconds})){
     const el = $(id);
-    if(el) el.textContent = String(value).padStart(2, "0");
+    if(el) el.textContent = String(value).padStart(2,"0");
   }
 }
 tick();
-setInterval(tick, 1000);
+setInterval(tick,1000);
 
-// Save the Date
-$("saveDate")?.addEventListener("click", (e) => {
+$("saveDate").addEventListener("click",(e)=>{
   e.preventDefault();
 
-  const ics = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Steffen & Nini//Wedding//EN
-BEGIN:VEVENT
-UID:steffen-nini-20261129
-DTSTAMP:20260927T000000Z
-DTSTART:20261129T060000Z
-DTEND:20261129T150000Z
-SUMMARY:The Wedding of Steffen & Nini
-DESCRIPTION:Wedding Blessing Ceremony at 13:00 WIB and Intimate Dinner Reception at 19:00 WIB.
-LOCATION:Jakarta, Indonesia
-END:VEVENT
-END:VCALENDAR`;
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "PRODID:-//Steffen & Nini//Wedding//EN",
+    "BEGIN:VEVENT",
+    "UID:steffen-nini-blessing-20261129",
+    "DTSTAMP:20260927T000000Z",
+    "DTSTART;TZID=Asia/Jakarta:20261129T130000",
+    "SUMMARY:Wedding Blessing Ceremony — Steffen & Nini",
+    "DESCRIPTION:The Wedding of Steffen & Nini",
+    "LOCATION:Vihara Prasadha Jinarakkhita\\, Kembangan\\, West Jakarta",
+    "END:VEVENT",
+    "BEGIN:VEVENT",
+    "UID:steffen-nini-reception-20261129",
+    "DTSTAMP:20260927T000000Z",
+    "DTSTART;TZID=Asia/Jakarta:20261129T190000",
+    "SUMMARY:Intimate Dinner Reception — Steffen & Nini",
+    "DESCRIPTION:The Wedding of Steffen & Nini",
+    "LOCATION:Grand Hyatt Jakarta — The Residence OnFive\\, Central Jakarta",
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ];
 
-  const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
+  const blob = new Blob([lines.join("\r\n")],{type:"text/calendar;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "Steffen-Nini-29-November-2026.ics";
+  a.href = url;
+  a.download = "Steffen-Nini-Wedding-29-November-2026.ics";
+  document.body.appendChild(a);
   a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
 });
 
-// Live Wishes
-$("wishForm")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
+$("wishMessage").addEventListener("input",()=>{
+  $("wishCount").textContent = $("wishMessage").value.length;
+  $("wishStatus").textContent = "";
+});
 
-  if(!code) return;
+let wishSending = false;
+$("wishForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();
+  if(!code || wishSending) return;
 
   const name = $("wishName").value.trim();
   const message = $("wishMessage").value.trim();
+  if(!name || !message) return;
 
-  if(!name || !message){
-    alert("Please fill in your name and message.");
-    return;
-  }
+  const submit = $("wishSubmit");
+  wishSending = true;
+  submit.disabled = true;
+  submit.textContent = "Sending…";
 
   try{
-    await addDoc(collection(db, "wishes"), {
+    $("wishStatus").textContent = "";
+    await addDoc(collection(db,"wishes"),{
       code,
       name,
       message,
-      createdAt: serverTimestamp()
+      createdAt:serverTimestamp()
     });
 
     $("wishMessage").value = "";
+    $("wishCount").textContent = "0";
+    wishesVisible = Math.max(wishesVisible,6);
     await loadWishes();
+    $("wishStatus").textContent = "Thank you — your wish has been sent.";
   }catch(err){
     console.error(err);
-    alert("Your message could not be sent. Please try again.");
+    $("wishStatus").textContent = "Your message could not be sent. Please try again.";
+  }finally{
+    wishSending = false;
+    submit.disabled = false;
+    submit.textContent = "Send Wishes";
   }
 });
 
-// Music placeholder
-let musicOn = false;
-$("musicBtn")?.addEventListener("click", () => {
-  musicOn = !musicOn;
-  $("musicBtn").textContent = musicOn ? "❚❚" : "♫";
-  alert(
-    musicOn
-      ? 'Music placeholder ON. Jay Chou — "I Do" will be connected after the approved audio source is ready.'
-      : "Music paused."
-  );
-});
+addEventListener("scroll",()=>{
+  document.body.classList.toggle("scrolled",scrollY>520);
+},{passive:true});
 
-addEventListener("scroll", () => {
-  document.body.classList.toggle("scrolled", scrollY > 500);
-});
+const revealObserver = new IntersectionObserver(entries=>{
+  for(const entry of entries){
+    if(entry.isIntersecting){
+      entry.target.classList.add("visible");
+      revealObserver.unobserve(entry.target);
+    }
+  }
+},{threshold:.12});
+
+document.querySelectorAll(".reveal").forEach(el=>revealObserver.observe(el));
 
 await loadInvitation();
 </script>
