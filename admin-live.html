@@ -13,6 +13,21 @@ input,select,textarea{border:1px solid #dbc8b7;background:#fffdfa;border-radius:
 .login{position:fixed;inset:0;background:linear-gradient(135deg,#4c1820,#8d3235);z-index:50;display:grid;place-items:center;padding:18px}.login.hide{display:none}.loginbox{width:min(420px,100%);background:#fffaf4;padding:24px;border-radius:20px;text-align:center}.loginbox input{width:100%;margin:7px 0}.loginbox .btn{width:100%;margin-top:6px}
 .modal{display:none;position:fixed;inset:0;background:rgba(30,20,20,.52);z-index:40;place-items:center;padding:14px}.modal.open{display:grid}.dialog{width:min(760px,100%);max-height:92vh;overflow:auto;background:var(--paper);padding:20px;border-radius:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;color:var(--taupe);font-size:.67rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}.field input,.field select,.field textarea{width:100%}.full{grid-column:1/-1}.members{margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}.member{display:grid;grid-template-columns:1fr 145px;gap:8px;margin:7px 0}.right{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.status{margin:10px 0 0;font-size:.78rem}.error{color:#a1262b}.ok{color:#436a46}
 @media(max-width:760px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.full{grid-column:auto}.member{grid-template-columns:1fr}}
+
+.mobile-list{display:none}
+.guest-card{background:#fffaf5;border:1px solid #eadccc;border-radius:16px;padding:14px;margin:10px 0}
+.guest-card h3{margin:0 0 3px;font:600 1.05rem Georgia,serif;color:var(--deep)}
+.guest-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.meta-item{background:#f8efe7;border-radius:10px;padding:8px}
+.meta-item span{display:block;font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;color:var(--taupe);margin-bottom:3px}
+.codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3e6da;border-radius:9px;padding:7px 9px;display:inline-block}
+.mobile-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+.mobile-actions button{border:1px solid #d9c3b3;background:#fff9f4;color:var(--deep);border-radius:10px;padding:9px 8px;font-size:.78rem}
+@media(max-width:760px){
+  .wrap{display:none}
+  .mobile-list{display:block}
+}
+
 </style></head><body>
 <div class="login" id="login"><div class="loginbox"><div style="font-size:2.5rem;color:#9E2A2B">囍</div><h2>Wedding Admin</h2>
 <input id="email" type="email" placeholder="Admin email"><input id="password" type="password" placeholder="Password"><button class="btn" id="signIn">Sign in</button><div id="loginStatus" class="status"></div></div></div>
@@ -20,7 +35,7 @@ input,select,textarea{border:1px solid #dbc8b7;background:#fffdfa;border-radius:
 <div class="top"><div><h1 style="margin:0">Steffen & Nini — Live Admin</h1><div class="note">29 November 2026</div></div><div><button class="btn" id="addBtn">+ Add Guest</button> <button class="btn alt" id="signOut">Sign out</button></div></div>
 <div class="cards"><div class="card"><span class="note">Invitations</span><b id="mInv">0</b></div><div class="card"><span class="note">Seats</span><b id="mSeats">0</b></div><div class="card"><span class="note">VEG</span><b id="mVeg">0</b></div><div class="card"><span class="note">Not sent</span><b id="mUnsent">0</b></div><div class="card"><span class="note">Opened</span><b id="mOpened">0</b></div><div class="card"><span class="note">Wishes</span><b id="mWishes">0</b></div></div>
 <div class="panel"><div class="toolbar"><input id="search" placeholder="Search name / WhatsApp / category"><select id="catFilter"><option value="">All categories</option></select></div><div id="status" class="status"></div>
-<div class="wrap"><table><thead><tr><th>Invitation</th><th>WhatsApp</th><th>Category</th><th>Type</th><th>Seats</th><th>VEG</th><th>Table</th><th>Delivery</th><th>Opened</th><th>Code</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+<div class="wrap"><table><thead><tr><th>Invitation</th><th>WhatsApp</th><th>Category</th><th>Type</th><th>Seats</th><th>VEG</th><th>Table</th><th>Delivery</th><th>Opened</th><th>Code</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div><div id="mobileRows" class="mobile-list"></div></div>
 <div class="panel" style="margin-top:14px"><h2>Wishes Moderation</h2><div id="wishes"></div></div>
 </main>
 <div class="modal" id="modal"><div class="dialog"><h2 id="modalTitle">Add Guest</h2><form id="form"><div class="grid">
@@ -48,15 +63,89 @@ ${link(g)}
 
 29 November 2026`;return `https://wa.me/${p}?text=${encodeURIComponent(msg)}`}
 async function load(){try{$("status").textContent="Loading...";const [priv,opens,w]=await Promise.all([getDocs(collection(db,"privateInvitations")),getDocs(collection(db,"openEvents")),getDocs(query(collection(db,"wishes"),orderBy("createdAt","desc")))]);guests=priv.docs.map(d=>({code:d.id,...d.data()}));openCounts={};opens.forEach(d=>{const c=d.data().code;openCounts[c]=(openCounts[c]||0)+1});wishDocs=w.docs.map(d=>({id:d.id,...d.data()}));render();$("status").textContent="Live data loaded.";$("status").className="status ok"}catch(e){$("status").textContent=e.message;$("status").className="status error"}}
-function render(){const q=$("search").value.toLowerCase(),cat=$("catFilter").value;const list=guests.filter(g=>(!q||JSON.stringify(g).toLowerCase().includes(q))&&(!cat||g.category===cat));$("rows").innerHTML=list.map(g=>`<tr><td><b>${esc(g.invitationName)}</b><div class="note">${esc(g.primaryContact)}</div></td><td>${esc(g.phone)}</td><td><span class="pill">${esc(g.category)}</span></td><td>${esc(g.invitationType)}</td><td>${g.seats||0}</td><td>${veg(g)}</td><td>${esc(g.tableNo||"—")}</td><td>${esc(g.deliveryStatus||"Belum Dikirim")}</td><td>${openCounts[g.code]||0}</td><td><code>${esc(g.code)}</code></td><td><div class="actions"><button data-a="copy" data-c="${g.code}">Copy Link</button><button data-a="wa" data-c="${g.code}">WhatsApp</button><button data-a="edit" data-c="${g.code}">Edit</button><button data-a="del" data-c="${g.code}">Delete</button></div></td></tr>`).join("")||'<tr><td colspan="11">No guests.</td></tr>';
-$("mInv").textContent=guests.length;$("mSeats").textContent=guests.reduce((a,g)=>a+(+g.seats||0),0);$("mVeg").textContent=guests.reduce((a,g)=>a+veg(g),0);$("mUnsent").textContent=guests.filter(g=>g.deliveryStatus==="Belum Dikirim").length;$("mOpened").textContent=Object.keys(openCounts).filter(c=>openCounts[c]>0).length;$("mWishes").textContent=wishDocs.length;
-$("wishes").innerHTML=wishDocs.map(w=>`<div style="padding:10px 0;border-bottom:1px solid #eadccc"><b>${esc(w.name)}</b><div>${esc(w.message)}</div><button class="btn alt" style="margin-top:6px" data-wish="${w.id}">Delete</button></div>`).join("")||'<div class="note">No wishes.</div>'}
+function render(){
+  const q=$("search").value.toLowerCase(),cat=$("catFilter").value;
+  const list=guests.filter(g=>(!q||JSON.stringify(g).toLowerCase().includes(q))&&(!cat||g.category===cat));
+
+  $("rows").innerHTML=list.map(g=>`<tr>
+    <td><b>${esc(g.invitationName)}</b><div class="note">${esc(g.primaryContact)}</div></td>
+    <td>${esc(g.phone)}</td>
+    <td><span class="pill">${esc(g.category)}</span></td>
+    <td>${esc(g.invitationType)}</td>
+    <td>${g.seats||0}</td>
+    <td>${veg(g)}</td>
+    <td>${esc(g.tableNo||"—")}</td>
+    <td>${esc(g.deliveryStatus||"Belum Dikirim")}</td>
+    <td>${openCounts[g.code]||0}</td>
+    <td><code>${esc(g.code)}</code></td>
+    <td><div class="actions">
+      <button data-a="copy" data-c="${g.code}">Copy Link</button>
+      <button data-a="wa" data-c="${g.code}">WhatsApp</button>
+      <button data-a="edit" data-c="${g.code}">Edit</button>
+      <button data-a="del" data-c="${g.code}">Delete</button>
+    </div></td>
+  </tr>`).join("")||'<tr><td colspan="11">No guests.</td></tr>';
+
+  $("mobileRows").innerHTML=list.map(g=>`
+    <div class="guest-card">
+      <h3>${esc(g.invitationName)}</h3>
+      <div class="note">${esc(g.primaryContact)} • ${esc(g.phone||"No WhatsApp")}</div>
+
+      <div class="guest-meta">
+        <div class="meta-item"><span>Category</span>${esc(g.category)}</div>
+        <div class="meta-item"><span>Invitation Type</span>${esc(g.invitationType)}</div>
+        <div class="meta-item"><span>Seats</span>${g.seats||0}</div>
+        <div class="meta-item"><span>Vegetarian</span>${veg(g)} VEG</div>
+        <div class="meta-item"><span>Table</span>${esc(g.tableNo||"—")}</div>
+        <div class="meta-item"><span>Delivery</span>${esc(g.deliveryStatus||"Belum Dikirim")}</div>
+        <div class="meta-item"><span>Opened</span>${openCounts[g.code]||0}×</div>
+        <div class="meta-item"><span>Personal Code</span><span class="codebox">${esc(g.code)}</span></div>
+      </div>
+
+      <div class="mobile-actions">
+        <button data-a="copy" data-c="${g.code}">Copy Link</button>
+        <button data-a="wa" data-c="${g.code}">WhatsApp</button>
+        <button data-a="edit" data-c="${g.code}">Edit</button>
+        <button data-a="del" data-c="${g.code}">Delete</button>
+      </div>
+    </div>
+  `).join("") || '<div class="note">No guests.</div>';
+
+  $("mInv").textContent=guests.length;
+  $("mSeats").textContent=guests.reduce((a,g)=>a+(+g.seats||0),0);
+  $("mVeg").textContent=guests.reduce((a,g)=>a+veg(g),0);
+  $("mUnsent").textContent=guests.filter(g=>g.deliveryStatus==="Belum Dikirim").length;
+  $("mOpened").textContent=Object.keys(openCounts).filter(c=>openCounts[c]>0).length;
+  $("mWishes").textContent=wishDocs.length;
+
+  $("wishes").innerHTML=wishDocs.map(w=>`<div style="padding:10px 0;border-bottom:1px solid #eadccc"><b>${esc(w.name)}</b><div>${esc(w.message)}</div><button class="btn alt" style="margin-top:6px" data-wish="${w.id}">Delete</button></div>`).join("")||'<div class="note">No wishes.</div>';
+}
 function members(existing=[]){const n=Math.max(1,+$("fSeats").value||1);$("memberFields").innerHTML="";for(let i=0;i<n;i++){const m=existing[i]||{name:i===0?$("fContact").value:"",meal:"Regular"};const d=document.createElement("div");d.className="member";d.innerHTML=`<input class="mn" value="${esc(m.name)}" placeholder="Guest ${i+1}"><select class="mm"><option ${m.meal==="Regular"?"selected":""}>Regular</option><option ${m.meal==="Vegetarian"?"selected":""}>Vegetarian</option></select>`;$("memberFields").appendChild(d)}}
 function open(g=null){editingCode=g?.code||null;$("modalTitle").textContent=g?"Edit Guest":"Add Guest";$("fName").value=g?.invitationName||"";$("fContact").value=g?.primaryContact||"";$("fPhone").value=g?.phone||"";$("fCategory").value=g?.category||categories[0];$("fType").value=g?.invitationType||"Digital";$("fSeats").value=g?.seats||2;$("fTable").value=g?.tableNo||"";$("fDelivery").value=g?.deliveryStatus||"Belum Dikirim";$("fNotes").value=g?.notes||"";members(g?.members||[]);$("modal").classList.add("open")}
 function close(){$("modal").classList.remove("open")}
 $("signIn").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("email").value,$("password").value);$("loginStatus").textContent=""}catch(e){$("loginStatus").textContent=e.message;$("loginStatus").className="status error"}};$("signOut").onclick=()=>fbSignOut(auth);onAuthStateChanged(auth,u=>{if(u){$("login").classList.add("hide");load()}else $("login").classList.remove("hide")});
 $("addBtn").onclick=()=>open();$("cancel").onclick=close;$("modal").onclick=e=>{if(e.target===$("modal"))close()};$("fSeats").oninput=()=>{const old=[...document.querySelectorAll(".member")].map(r=>({name:r.querySelector(".mn").value,meal:r.querySelector(".mm").value}));members(old)};$("search").oninput=render;$("catFilter").onchange=render;
 $("form").onsubmit=async e=>{e.preventDefault();const c=editingCode||mkCode();const ms=[...document.querySelectorAll(".member")].map((r,i)=>({name:r.querySelector(".mn").value.trim()||`Guest ${i+1}`,meal:r.querySelector(".mm").value}));const priv={invitationName:$("fName").value.trim(),primaryContact:$("fContact").value.trim(),phone:$("fPhone").value.trim(),category:$("fCategory").value,invitationType:$("fType").value,seats:+$("fSeats").value||1,tableNo:$("fTable").value.trim(),deliveryStatus:$("fDelivery").value,notes:$("fNotes").value.trim(),members:ms};await Promise.all([setDoc(doc(db,"privateInvitations",c),priv),setDoc(doc(db,"invitations",c),{invitationName:priv.invitationName,seats:priv.seats})]);close();await load()};
-$("rows").onclick=async e=>{const b=e.target.closest("button[data-a]");if(!b)return;const g=guests.find(x=>x.code===b.dataset.c);if(!g)return;if(b.dataset.a==="copy"){try{await navigator.clipboard.writeText(link(g));alert("Copied")}catch{prompt("Copy link:",link(g))}}if(b.dataset.a==="wa")window.open(wa(g),"_blank");if(b.dataset.a==="edit")open(g);if(b.dataset.a==="del"&&confirm("Delete this invitation?")){await Promise.all([deleteDoc(doc(db,"privateInvitations",g.code)),deleteDoc(doc(db,"invitations",g.code))]);await load()}};
+async function handleGuestAction(e){
+  const b=e.target.closest("button[data-a]");
+  if(!b)return;
+  const g=guests.find(x=>x.code===b.dataset.c);
+  if(!g)return;
+  if(b.dataset.a==="copy"){
+    try{await navigator.clipboard.writeText(link(g));alert("Personal link copied:\n"+link(g))}
+    catch{prompt("Copy this personal link:",link(g))}
+  }
+  if(b.dataset.a==="wa")window.open(wa(g),"_blank");
+  if(b.dataset.a==="edit")open(g);
+  if(b.dataset.a==="del"&&confirm("Delete this invitation?")){
+    await Promise.all([deleteDoc(doc(db,"privateInvitations",g.code)),deleteDoc(doc(db,"invitations",g.code))]);
+    await load();
+  }
+}
+$("rows").onclick=handleGuestAction;
+$("mobileRows").onclick=handleGuestAction;
+
+/* legacy handler removed */
+const __unusedGuestHandler = async e=>{const b=e.target.closest("button[data-a]");if(!b)return;const g=guests.find(x=>x.code===b.dataset.c);if(!g)return;if(b.dataset.a==="copy"){try{await navigator.clipboard.writeText(link(g));alert("Copied")}catch{prompt("Copy link:",link(g))}}if(b.dataset.a==="wa")window.open(wa(g),"_blank");if(b.dataset.a==="edit")open(g);if(b.dataset.a==="del"&&confirm("Delete this invitation?")){await Promise.all([deleteDoc(doc(db,"privateInvitations",g.code)),deleteDoc(doc(db,"invitations",g.code))]);await load()}};
 $("wishes").onclick=async e=>{const b=e.target.closest("button[data-wish]");if(!b)return;if(confirm("Delete this wish?")){await deleteDoc(doc(db,"wishes",b.dataset.wish));await load()}};
 </script></body></html>
