@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Steffen & Nini — Wedding Admin V2</title>
+<title>Steffen & Nini — Wedding Admin V2.1</title>
 <style>
 :root{
   --ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;
@@ -116,7 +116,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <main>
   <div class="top">
     <div>
-      <h1>Steffen &amp; Nini — Admin V2</h1>
+      <h1>Steffen &amp; Nini — Admin V2.1</h1>
       <div class="note">29 November 2026 • Firebase live</div>
     </div>
     <div class="top-actions">
@@ -294,8 +294,24 @@ function personalLink(g){
   return `https://steffen-nini.github.io/?i=${encodeURIComponent(g.code)}`;
 }
 
+function normalizeWhatsAppNumber(raw){
+  let phone = String(raw || "").replace(/\D/g,"");
+
+  // Indonesia normalization
+  if(phone.startsWith("0")){
+    phone = "62" + phone.slice(1);
+  }else if(phone.startsWith("8")){
+    phone = "62" + phone;
+  }else if(phone.startsWith("620")){
+    phone = "62" + phone.slice(3);
+  }
+
+  return phone;
+}
+
 function whatsappLink(g){
-  const phone = (g.phone || "").replace(/\D/g,"");
+  const phone = normalizeWhatsAppNumber(g.phone);
+
   const msg = `Dear ${g.invitationName},
 
 We would be honored to have you celebrate the wedding of Steffen & Nini with us.
@@ -304,6 +320,7 @@ Please open your personal invitation here:
 ${personalLink(g)}
 
 29 November 2026`;
+
   return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 }
 
@@ -568,6 +585,13 @@ async function handleGuestAction(e){
   }
 
   if(b.dataset.a==="wa"){
+    const normalized = normalizeWhatsAppNumber(g.phone);
+
+    if(!/^62\d{8,13}$/.test(normalized)){
+      alert("Nomor WhatsApp belum valid. Isi nomor Indonesia seperti 081234567890 atau +6281234567890.");
+      return;
+    }
+
     // Open WhatsApp first.
     window.open(whatsappLink(g),"_blank");
 
