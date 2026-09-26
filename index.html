@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#681E2A">
-<meta name="build" content="final-uiux-v5-motion-2026-09-27">
+<meta name="build" content="final-uiux-v5-1-safe-motion-2026-09-27">
 <meta name="description" content="The Wedding of Steffen & Nini — 29 November 2026">
 <meta property="og:title" content="The Wedding of Steffen & Nini">
 <meta property="og:description" content="29 November 2026">
@@ -350,6 +350,7 @@ main{overflow:hidden}
 /* Event */
 .event-grid{
   display:grid;
+  padding-inline:2px;
   grid-template-columns:1fr 1fr;
   gap:18px;
   margin-top:32px;
@@ -401,6 +402,7 @@ main{overflow:hidden}
 .family-section{background:rgba(255,251,246,.42)}
 .family-grid{
   display:grid;
+  padding-inline:2px;
   grid-template-columns:1fr 1fr;
   gap:18px;
   margin-top:32px;
@@ -449,6 +451,7 @@ main{overflow:hidden}
 /* Wishes */
 .wish-grid{
   display:grid;
+  padding-inline:2px;
   grid-template-columns:.92fr 1.08fr;
   gap:18px;
   margin-top:32px;
@@ -705,11 +708,11 @@ footer{
 /* Cards enter with direction and more depth */
 .event-grid .event-card:nth-child(1).reveal,
 .family-grid .family-card:nth-child(1).reveal{
-  transform:translateX(-44px) translateY(20px) scale(.97);
+  transform:translateX(-24px) translateY(22px) scale(.985);
 }
 .event-grid .event-card:nth-child(2).reveal,
 .family-grid .family-card:nth-child(2).reveal{
-  transform:translateX(44px) translateY(20px) scale(.97);
+  transform:translateX(24px) translateY(22px) scale(.985);
 }
 .event-grid .event-card.visible,
 .family-grid .family-card.visible{
@@ -740,8 +743,8 @@ footer{
 .story-wrap.reveal.visible .story:nth-child(3){transition-delay:.44s}
 
 /* Wishes: form and board feel like separate layers */
-.wish-grid .wish-form.reveal{transform:translateX(-34px) translateY(24px) scale(.98)}
-.wish-grid .wish-board.reveal{transform:translateX(34px) translateY(24px) scale(.98)}
+.wish-grid .wish-form.reveal{transform:translateX(-20px) translateY(24px) scale(.985)}
+.wish-grid .wish-board.reveal{transform:translateX(20px) translateY(24px) scale(.985)}
 .wish-grid .wish-form.visible,
 .wish-grid .wish-board.visible{transform:none}
 
@@ -773,6 +776,23 @@ footer{
 
 @media(max-width:720px){
   .container{width:min(100% - 28px,920px)}
+
+  /* Mobile-safe motion: keep cards fully inside the viewport */
+  .event-grid .event-card:nth-child(1).reveal,
+  .event-grid .event-card:nth-child(2).reveal,
+  .family-grid .family-card:nth-child(1).reveal,
+  .family-grid .family-card:nth-child(2).reveal,
+  .wish-grid .wish-form.reveal,
+  .wish-grid .wish-board.reveal{
+    transform:translateY(30px) scale(.985);
+  }
+
+  .event-grid .event-card.visible,
+  .family-grid .family-card.visible,
+  .wish-grid .wish-form.visible,
+  .wish-grid .wish-board.visible{
+    transform:none;
+  }
   .section{padding:70px 0}
   .section.compact{padding:56px 0}
   .gate-card{padding:36px 22px 32px}
