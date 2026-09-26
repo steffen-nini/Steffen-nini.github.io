@@ -1,151 +1,689 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow"><title>Steffen & Nini — Live Admin</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Steffen & Nini — Wedding Admin V2</title>
 <style>
-:root{--ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;--gold:#D8C3A5;--taupe:#8A7565;--line:#E7D7C6;--ink:#352825}
-*{box-sizing:border-box}body{margin:0;background:var(--ivory);color:var(--ink);font-family:Inter,system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:24px 14px 70px}
-h1,h2{font-family:Georgia,serif;color:var(--deep);font-weight:500}.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
-.panel,.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px}.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:20px 0}.card b{display:block;color:var(--red);font:500 1.7rem Georgia,serif}
-button,input,select,textarea{font:inherit}.btn{border:1px solid var(--red);background:var(--red);color:#fff;padding:9px 12px;border-radius:11px;cursor:pointer}.btn.alt{background:transparent;color:var(--red)}
-input,select,textarea{border:1px solid #dbc8b7;background:#fffdfa;border-radius:11px;padding:9px 10px;color:var(--ink)}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.toolbar input{flex:1;min-width:220px}
-.wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1200px}th,td{padding:10px 8px;border-bottom:1px solid #eadccc;text-align:left;font-size:.8rem;vertical-align:top}th{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--deep)}
-.pill{display:inline-block;border-radius:999px;background:#f0e2d4;padding:4px 7px;font-size:.68rem}.note{font-size:.76rem;color:var(--taupe)}.actions{display:flex;gap:5px;flex-wrap:wrap}.actions button{font-size:.68rem;padding:5px 7px;border-radius:8px;border:1px solid #dcc8b8;background:#fff9f4;color:var(--deep)}
-.login{position:fixed;inset:0;background:linear-gradient(135deg,#4c1820,#8d3235);z-index:50;display:grid;place-items:center;padding:18px}.login.hide{display:none}.loginbox{width:min(420px,100%);background:#fffaf4;padding:24px;border-radius:20px;text-align:center}.loginbox input{width:100%;margin:7px 0}.loginbox .btn{width:100%;margin-top:6px}
-.modal{display:none;position:fixed;inset:0;background:rgba(30,20,20,.52);z-index:40;place-items:center;padding:14px}.modal.open{display:grid}.dialog{width:min(760px,100%);max-height:92vh;overflow:auto;background:var(--paper);padding:20px;border-radius:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;color:var(--taupe);font-size:.67rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}.field input,.field select,.field textarea{width:100%}.full{grid-column:1/-1}.members{margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}.member{display:grid;grid-template-columns:1fr 145px;gap:8px;margin:7px 0}.right{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.status{margin:10px 0 0;font-size:.78rem}.error{color:#a1262b}.ok{color:#436a46}
-@media(max-width:760px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.full{grid-column:auto}.member{grid-template-columns:1fr}}
+:root{
+  --ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;
+  --gold:#D8C3A5;--taupe:#8A7565;--line:#E7D7C6;--ink:#352825;
+  --green:#4f6f50;--greenBg:#e8f1e5;--redBg:#f6dfdf;--grayBg:#eee9e5;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+main{max-width:1250px;margin:auto;padding:22px 14px 72px}
+h1,h2,h3{font-family:Georgia,serif;color:var(--deep);font-weight:500}
+h1{margin:0;font-size:clamp(2rem,6vw,3.2rem)}
+.top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--red);background:var(--red);color:#fff;padding:10px 13px;border-radius:12px;font-weight:700}
+.btn.alt{background:transparent;color:var(--red)}
+.btn.soft{background:#fff8f3;color:var(--red);border-color:#dec5b5}
+.note{font-size:.76rem;color:var(--taupe);line-height:1.45}
+.status{font-size:.78rem;margin-top:8px}
+.ok{color:var(--green)} .error{color:#a3272d}
+
+.cards{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin:20px 0}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:15px}
+.card span{display:block;color:var(--taupe);font-size:.67rem;text-transform:uppercase;letter-spacing:.08em}
+.card b{display:block;color:var(--red);font:500 1.65rem Georgia,serif;margin-top:6px}
+
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 10px 30px rgba(70,40,35,.04)}
+.toolbar{display:grid;grid-template-columns:2fr repeat(5,minmax(130px,1fr));gap:8px;margin-bottom:12px}
+input,select,textarea{border:1px solid #dbc8b7;background:#fffdfa;border-radius:11px;padding:10px 11px;color:var(--ink);width:100%}
+
+.desktop-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:1450px}
+th,td{padding:10px 8px;border-bottom:1px solid #eadccc;text-align:left;font-size:.79rem;vertical-align:top}
+th{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--deep)}
+.actions{display:flex;gap:5px;flex-wrap:wrap}
+.actions button{font-size:.67rem;padding:5px 7px;border-radius:8px;border:1px solid #dcc8b8;background:#fff9f4;color:var(--deep)}
+.pill{display:inline-block;border-radius:999px;padding:4px 7px;font-size:.67rem;background:#f0e2d4}
+.pill.green{background:var(--greenBg);color:var(--green)}
+.pill.red{background:var(--redBg);color:#8d3034}
+.pill.gray{background:var(--grayBg);color:#6c5e58}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 
 .mobile-list{display:none}
-.guest-card{background:#fffaf5;border:1px solid #eadccc;border-radius:16px;padding:14px;margin:10px 0}
-.guest-card h3{margin:0 0 3px;font:600 1.05rem Georgia,serif;color:var(--deep)}
+.guest-card{background:#fffaf5;border:1px solid #eadccc;border-radius:17px;padding:14px;margin:11px 0}
+.guest-card h3{margin:0 0 3px;font-size:1.08rem}
 .guest-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-.meta-item{background:#f8efe7;border-radius:10px;padding:8px}
-.meta-item span{display:block;font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;color:var(--taupe);margin-bottom:3px}
-.codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3e6da;border-radius:9px;padding:7px 9px;display:inline-block}
+.meta{background:#f8efe7;border-radius:11px;padding:8px}
+.meta span{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--taupe);margin-bottom:4px}
+.codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3e6da;border-radius:9px;padding:6px 8px;display:inline-block}
 .mobile-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
 .mobile-actions button{border:1px solid #d9c3b3;background:#fff9f4;color:var(--deep);border-radius:10px;padding:9px 8px;font-size:.78rem}
+.mobile-actions button.primary{background:var(--red);color:#fff;border-color:var(--red)}
+
+.wishes{margin-top:14px}
+.wish-row{padding:12px 0;border-bottom:1px solid #eadccc}
+.wish-row:last-child{border-bottom:0}
+
+.login{position:fixed;inset:0;background:linear-gradient(135deg,#4c1820,#8d3235);z-index:100;display:grid;place-items:center;padding:18px}
+.login.hide{display:none}
+.loginbox{width:min(420px,100%);background:#fffaf4;padding:25px;border-radius:22px;text-align:center}
+.loginbox input{margin:7px 0}
+.loginbox .btn{width:100%;margin-top:6px}
+
+.modal{display:none;position:fixed;inset:0;background:rgba(30,20,20,.52);z-index:80;place-items:center;padding:14px}
+.modal.open{display:grid}
+.dialog{width:min(780px,100%);max-height:92vh;overflow:auto;background:var(--paper);padding:20px;border-radius:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field label{display:block;color:var(--taupe);font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.full{grid-column:1/-1}
+.members{margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+.member{display:grid;grid-template-columns:1fr 145px;gap:8px;margin:7px 0}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sort-info{font-size:.7rem;color:var(--taupe)}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+
+@media(max-width:1100px){
+  .cards{grid-template-columns:repeat(4,1fr)}
+  .toolbar{grid-template-columns:1fr 1fr 1fr}
+}
 @media(max-width:760px){
-  .wrap{display:none}
+  main{padding:18px 12px 60px}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .toolbar{grid-template-columns:1fr 1fr}
+  .toolbar input{grid-column:1/-1}
+  .desktop-wrap{display:none}
   .mobile-list{display:block}
+  .form-grid,.stats-row{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .member{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="login" id="login">
+  <div class="loginbox">
+    <div style="font-size:2.5rem;color:#9E2A2B">囍</div>
+    <h2>Wedding Admin V2</h2>
+    <input id="email" type="email" placeholder="Admin email">
+    <input id="password" type="password" placeholder="Password">
+    <button class="btn" id="signIn">Sign in</button>
+    <div id="loginStatus" class="status"></div>
+  </div>
+</div>
+
+<main>
+  <div class="top">
+    <div>
+      <h1>Steffen &amp; Nini — Admin V2</h1>
+      <div class="note">29 November 2026 • Firebase live</div>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="addBtn">+ Add Guest</button>
+      <button class="btn alt" id="reloadBtn">Refresh</button>
+      <button class="btn alt" id="signOut">Sign out</button>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><span>Invitations</span><b id="mInv">0</b></div>
+    <div class="card"><span>Seats</span><b id="mSeats">0</b></div>
+    <div class="card"><span>VEG</span><b id="mVeg">0</b></div>
+    <div class="card"><span>Not sent</span><b id="mUnsent">0</b></div>
+    <div class="card"><span>Sent / Delivered</span><b id="mSent">0</b></div>
+    <div class="card"><span>Opened guests</span><b id="mOpened">0</b></div>
+    <div class="card"><span>Total opens</span><b id="mTotalOpens">0</b></div>
+    <div class="card"><span>Wishes</span><b id="mWishes">0</b></div>
+  </div>
+
+  <div class="panel">
+    <div class="section-title">
+      <div>
+        <h2 style="margin:0">Guest List</h2>
+        <div id="status" class="status"></div>
+      </div>
+      <div class="sort-info">Tap sort/filter to refine the list</div>
+    </div>
+
+    <div class="toolbar">
+      <input id="search" placeholder="Search name / WhatsApp / category">
+      <select id="catFilter"><option value="">All categories</option></select>
+      <select id="vegFilter">
+        <option value="">All meals</option>
+        <option value="veg">Has Vegetarian</option>
+        <option value="no-veg">No Vegetarian</option>
+      </select>
+      <select id="tableFilter"><option value="">All tables</option></select>
+      <select id="deliveryFilter">
+        <option value="">All delivery</option>
+        <option>Belum Dikirim</option>
+        <option>Sudah Dikirim</option>
+        <option>Sudah Diserahkan</option>
+      </select>
+      <select id="sortBy">
+        <option value="name">Sort: Name</option>
+        <option value="category">Sort: Category</option>
+        <option value="table">Sort: Table</option>
+        <option value="opened-desc">Sort: Most opened</option>
+        <option value="last-opened">Sort: Last opened</option>
+      </select>
+    </div>
+
+    <div class="desktop-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Invitation</th><th>WhatsApp</th><th>Category</th><th>Type</th>
+            <th>Seats</th><th>VEG</th><th>Table</th><th>Delivery</th>
+            <th>Opened</th><th>First Opened</th><th>Last Opened</th><th>Code</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div id="mobileRows" class="mobile-list"></div>
+  </div>
+
+  <div class="stats-row">
+    <div class="panel">
+      <h2 style="margin-top:0">Tables</h2>
+      <div id="tableSummary"></div>
+    </div>
+    <div class="panel">
+      <h2 style="margin-top:0">Category Breakdown</h2>
+      <div id="categorySummary"></div>
+    </div>
+  </div>
+
+  <div class="panel wishes">
+    <h2 style="margin-top:0">Wishes Moderation</h2>
+    <div id="wishes"></div>
+  </div>
+</main>
+
+<div class="modal" id="modal">
+  <div class="dialog">
+    <h2 id="modalTitle">Add Guest</h2>
+    <form id="form">
+      <div class="form-grid">
+        <div class="field full"><label>Invitation Name</label><input id="fName" required placeholder="Mr. Michael & Partner"></div>
+        <div class="field"><label>Primary Contact</label><input id="fContact" required></div>
+        <div class="field"><label>WhatsApp</label><input id="fPhone" placeholder="+62812..."></div>
+        <div class="field"><label>Category</label><select id="fCategory"></select></div>
+        <div class="field"><label>Invitation Type</label><select id="fType"><option>Digital</option><option>Printed</option><option>Both</option></select></div>
+        <div class="field"><label>Seats Reserved</label><input id="fSeats" type="number" min="1" value="2"></div>
+        <div class="field"><label>Table No</label><input id="fTable"></div>
+        <div class="field"><label>Delivery Status</label><select id="fDelivery"><option>Belum Dikirim</option><option>Sudah Dikirim</option><option>Sudah Diserahkan</option></select></div>
+        <div class="field full"><label>Internal Notes</label><textarea id="fNotes"></textarea></div>
+      </div>
+
+      <div class="members">
+        <b>Guest Members & Meal</b>
+        <div class="note">Vegetarian ditandai per orang.</div>
+        <div id="memberFields"></div>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" class="btn alt" id="cancel">Cancel</button>
+        <button class="btn" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut as fbSignOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+
+const categories = [
+  "Keluarga Steffen","Keluarga Nini","Teman Steffen","Teman Nini",
+  "Teman Bersama","Business / Relasi","VIP","Lainnya"
+];
+
+let guests = [];
+let wishDocs = [];
+let openEvents = [];
+let editingCode = null;
+
+$("fCategory").innerHTML = categories.map(x=>`<option>${x}</option>`).join("");
+$("catFilter").innerHTML = '<option value="">All categories</option>' + categories.map(x=>`<option>${x}</option>`).join("");
+
+function esc(v){
+  return String(v ?? "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[m]));
 }
 
-</style></head><body>
-<div class="login" id="login"><div class="loginbox"><div style="font-size:2.5rem;color:#9E2A2B">囍</div><h2>Wedding Admin</h2>
-<input id="email" type="email" placeholder="Admin email"><input id="password" type="password" placeholder="Password"><button class="btn" id="signIn">Sign in</button><div id="loginStatus" class="status"></div></div></div>
-<main>
-<div class="top"><div><h1 style="margin:0">Steffen & Nini — Live Admin</h1><div class="note">29 November 2026</div></div><div><button class="btn" id="addBtn">+ Add Guest</button> <button class="btn alt" id="signOut">Sign out</button></div></div>
-<div class="cards"><div class="card"><span class="note">Invitations</span><b id="mInv">0</b></div><div class="card"><span class="note">Seats</span><b id="mSeats">0</b></div><div class="card"><span class="note">VEG</span><b id="mVeg">0</b></div><div class="card"><span class="note">Not sent</span><b id="mUnsent">0</b></div><div class="card"><span class="note">Opened</span><b id="mOpened">0</b></div><div class="card"><span class="note">Wishes</span><b id="mWishes">0</b></div></div>
-<div class="panel"><div class="toolbar"><input id="search" placeholder="Search name / WhatsApp / category"><select id="catFilter"><option value="">All categories</option></select></div><div id="status" class="status"></div>
-<div class="wrap"><table><thead><tr><th>Invitation</th><th>WhatsApp</th><th>Category</th><th>Type</th><th>Seats</th><th>VEG</th><th>Table</th><th>Delivery</th><th>Opened</th><th>Code</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div><div id="mobileRows" class="mobile-list"></div></div>
-<div class="panel" style="margin-top:14px"><h2>Wishes Moderation</h2><div id="wishes"></div></div>
-</main>
-<div class="modal" id="modal"><div class="dialog"><h2 id="modalTitle">Add Guest</h2><form id="form"><div class="grid">
-<div class="field full"><label>Invitation Name</label><input id="fName" required placeholder="Mr. Michael & Partner"></div><div class="field"><label>Primary Contact</label><input id="fContact" required></div><div class="field"><label>WhatsApp</label><input id="fPhone" placeholder="+62812..."></div><div class="field"><label>Category</label><select id="fCategory"></select></div><div class="field"><label>Invitation Type</label><select id="fType"><option>Digital</option><option>Printed</option><option>Both</option></select></div><div class="field"><label>Seats Reserved</label><input id="fSeats" type="number" min="1" value="2"></div><div class="field"><label>Table No</label><input id="fTable"></div><div class="field"><label>Delivery Status</label><select id="fDelivery"><option>Belum Dikirim</option><option>Sudah Dikirim</option><option>Sudah Diserahkan</option></select></div><div class="field full"><label>Internal Notes</label><textarea id="fNotes"></textarea></div></div>
-<div class="members"><b>Guest Members & Meal</b><div class="note">Vegetarian ditandai per orang.</div><div id="memberFields"></div></div>
-<div class="right"><button type="button" class="btn alt" id="cancel">Cancel</button><button class="btn" type="submit">Save</button></div></form></div></div>
-<script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,signInWithEmailAndPassword,signOut as fbSignOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,collection,doc,getDocs,setDoc,deleteDoc,query,orderBy} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import {firebaseConfig} from "./firebase-config.js";
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
-const categories=["Keluarga Steffen","Keluarga Nini","Teman Steffen","Teman Nini","Teman Bersama","Business / Relasi","VIP","Lainnya"];let guests=[],openCounts={},wishDocs=[],editingCode=null;
-$("fCategory").innerHTML=categories.map(x=>`<option>${x}</option>`).join("");$("catFilter").innerHTML='<option value="">All categories</option>'+categories.map(x=>`<option>${x}</option>`).join("");
-function mkCode(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<6;i++)s+=c[Math.floor(Math.random()*c.length)];return s}
-function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function veg(g){return (g.members||[]).filter(m=>m.meal==="Vegetarian").length}
-function link(g){return `https://steffen-nini.github.io/?i=${encodeURIComponent(g.code)}`}
-function wa(g){const p=(g.phone||"").replace(/\D/g,"");const msg=`Dear ${g.invitationName},
+function mkCode(){
+  const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s="";
+  for(let i=0;i<6;i++) s += chars[Math.floor(Math.random()*chars.length)];
+  return s;
+}
+
+function veg(g){
+  return (g.members || []).filter(m => m.meal === "Vegetarian").length;
+}
+
+function personalLink(g){
+  return `https://steffen-nini.github.io/?i=${encodeURIComponent(g.code)}`;
+}
+
+function whatsappLink(g){
+  const phone = (g.phone || "").replace(/\D/g,"");
+  const msg = `Dear ${g.invitationName},
 
 We would be honored to have you celebrate the wedding of Steffen & Nini with us.
 
 Please open your personal invitation here:
-${link(g)}
+${personalLink(g)}
 
-29 November 2026`;return `https://wa.me/${p}?text=${encodeURIComponent(msg)}`}
-async function load(){try{$("status").textContent="Loading...";const [priv,opens,w]=await Promise.all([getDocs(collection(db,"privateInvitations")),getDocs(collection(db,"openEvents")),getDocs(query(collection(db,"wishes"),orderBy("createdAt","desc")))]);guests=priv.docs.map(d=>({code:d.id,...d.data()}));openCounts={};opens.forEach(d=>{const c=d.data().code;openCounts[c]=(openCounts[c]||0)+1});wishDocs=w.docs.map(d=>({id:d.id,...d.data()}));render();$("status").textContent="Live data loaded.";$("status").className="status ok"}catch(e){$("status").textContent=e.message;$("status").className="status error"}}
+29 November 2026`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+}
+
+function toDateSafe(v){
+  if(!v) return null;
+  if(typeof v.toDate === "function") return v.toDate();
+  const d = new Date(v);
+  return isNaN(d) ? null : d;
+}
+
+function fmtDate(v){
+  const d = toDateSafe(v);
+  if(!d) return "—";
+  return new Intl.DateTimeFormat("en-GB",{
+    day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",
+    timeZone:"Asia/Jakarta",hour12:false
+  }).format(d);
+}
+
+function openStats(code){
+  const ev = openEvents
+    .filter(x => x.code === code)
+    .map(x => toDateSafe(x.createdAt))
+    .filter(Boolean)
+    .sort((a,b)=>a-b);
+
+  return {
+    count: ev.length,
+    first: ev[0] || null,
+    last: ev[ev.length-1] || null
+  };
+}
+
+async function load(){
+  try{
+    $("status").textContent = "Loading live data...";
+    $("status").className = "status";
+
+    const [privSnap, openSnap, wishSnap] = await Promise.all([
+      getDocs(collection(db,"privateInvitations")),
+      getDocs(collection(db,"openEvents")),
+      getDocs(query(collection(db,"wishes"), orderBy("createdAt","desc")))
+    ]);
+
+    guests = privSnap.docs.map(d => ({ code:d.id, ...d.data() }));
+    openEvents = openSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+    wishDocs = wishSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+
+    rebuildTableFilter();
+    render();
+
+    $("status").textContent = "Live data loaded.";
+    $("status").className = "status ok";
+  }catch(err){
+    console.error(err);
+    $("status").textContent = err.message;
+    $("status").className = "status error";
+  }
+}
+
+function rebuildTableFilter(){
+  const vals = [...new Set(
+    guests.map(g => String(g.tableNo || "").trim()).filter(Boolean)
+  )].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+
+  const current = $("tableFilter").value;
+  $("tableFilter").innerHTML = '<option value="">All tables</option>' +
+    vals.map(v=>`<option>${esc(v)}</option>`).join("");
+
+  if(vals.includes(current)) $("tableFilter").value = current;
+}
+
+function filteredGuests(){
+  const q = $("search").value.toLowerCase().trim();
+  const cat = $("catFilter").value;
+  const vegF = $("vegFilter").value;
+  const tableF = $("tableFilter").value;
+  const delF = $("deliveryFilter").value;
+  const sort = $("sortBy").value;
+
+  let list = guests.filter(g => {
+    const matchQ = !q || JSON.stringify(g).toLowerCase().includes(q);
+    const matchCat = !cat || g.category === cat;
+    const matchVeg = !vegF || (vegF==="veg" ? veg(g)>0 : veg(g)===0);
+    const matchTable = !tableF || String(g.tableNo||"") === tableF;
+    const matchDelivery = !delF || g.deliveryStatus === delF;
+    return matchQ && matchCat && matchVeg && matchTable && matchDelivery;
+  });
+
+  list.sort((a,b)=>{
+    if(sort==="category") return String(a.category||"").localeCompare(String(b.category||""));
+    if(sort==="table") return String(a.tableNo||"9999").localeCompare(String(b.tableNo||"9999"),undefined,{numeric:true});
+    if(sort==="opened-desc") return openStats(b.code).count - openStats(a.code).count;
+    if(sort==="last-opened"){
+      const al=openStats(a.code).last?.getTime()||0, bl=openStats(b.code).last?.getTime()||0;
+      return bl-al;
+    }
+    return String(a.invitationName||"").localeCompare(String(b.invitationName||""));
+  });
+
+  return list;
+}
+
 function render(){
-  const q=$("search").value.toLowerCase(),cat=$("catFilter").value;
-  const list=guests.filter(g=>(!q||JSON.stringify(g).toLowerCase().includes(q))&&(!cat||g.category===cat));
+  const list = filteredGuests();
 
-  $("rows").innerHTML=list.map(g=>`<tr>
-    <td><b>${esc(g.invitationName)}</b><div class="note">${esc(g.primaryContact)}</div></td>
-    <td>${esc(g.phone)}</td>
-    <td><span class="pill">${esc(g.category)}</span></td>
-    <td>${esc(g.invitationType)}</td>
-    <td>${g.seats||0}</td>
-    <td>${veg(g)}</td>
-    <td>${esc(g.tableNo||"—")}</td>
-    <td>${esc(g.deliveryStatus||"Belum Dikirim")}</td>
-    <td>${openCounts[g.code]||0}</td>
-    <td><code>${esc(g.code)}</code></td>
-    <td><div class="actions">
-      <button data-a="copy" data-c="${g.code}">Copy Link</button>
-      <button data-a="wa" data-c="${g.code}">WhatsApp</button>
-      <button data-a="edit" data-c="${g.code}">Edit</button>
-      <button data-a="del" data-c="${g.code}">Delete</button>
-    </div></td>
-  </tr>`).join("")||'<tr><td colspan="11">No guests.</td></tr>';
-
-  $("mobileRows").innerHTML=list.map(g=>`
-    <div class="guest-card">
-      <h3>${esc(g.invitationName)}</h3>
-      <div class="note">${esc(g.primaryContact)} • ${esc(g.phone||"No WhatsApp")}</div>
-
-      <div class="guest-meta">
-        <div class="meta-item"><span>Category</span>${esc(g.category)}</div>
-        <div class="meta-item"><span>Invitation Type</span>${esc(g.invitationType)}</div>
-        <div class="meta-item"><span>Seats</span>${g.seats||0}</div>
-        <div class="meta-item"><span>Vegetarian</span>${veg(g)} VEG</div>
-        <div class="meta-item"><span>Table</span>${esc(g.tableNo||"—")}</div>
-        <div class="meta-item"><span>Delivery</span>${esc(g.deliveryStatus||"Belum Dikirim")}</div>
-        <div class="meta-item"><span>Opened</span>${openCounts[g.code]||0}×</div>
-        <div class="meta-item"><span>Personal Code</span><span class="codebox">${esc(g.code)}</span></div>
-      </div>
-
-      <div class="mobile-actions">
+  $("rows").innerHTML = list.map(g=>{
+    const o = openStats(g.code);
+    return `<tr>
+      <td><b>${esc(g.invitationName)}</b><div class="note">${esc(g.primaryContact||"")}</div></td>
+      <td>${esc(g.phone||"")}</td>
+      <td><span class="pill">${esc(g.category||"")}</span></td>
+      <td>${esc(g.invitationType||"")}</td>
+      <td>${g.seats||0}</td>
+      <td>${veg(g)}</td>
+      <td>${esc(g.tableNo||"—")}</td>
+      <td><span class="pill ${g.deliveryStatus==="Belum Dikirim"?"red":"green"}">${esc(g.deliveryStatus||"Belum Dikirim")}</span></td>
+      <td>${o.count}</td>
+      <td>${fmtDate(o.first)}</td>
+      <td>${fmtDate(o.last)}</td>
+      <td><code>${esc(g.code)}</code></td>
+      <td><div class="actions">
         <button data-a="copy" data-c="${g.code}">Copy Link</button>
         <button data-a="wa" data-c="${g.code}">WhatsApp</button>
         <button data-a="edit" data-c="${g.code}">Edit</button>
         <button data-a="del" data-c="${g.code}">Delete</button>
+      </div></td>
+    </tr>`;
+  }).join("") || '<tr><td colspan="13">No guests found.</td></tr>';
+
+  $("mobileRows").innerHTML = list.map(g=>{
+    const o = openStats(g.code);
+    return `<div class="guest-card">
+      <h3>${esc(g.invitationName)}</h3>
+      <div class="note">${esc(g.primaryContact||"")} • ${esc(g.phone||"No WhatsApp")}</div>
+
+      <div class="guest-meta">
+        <div class="meta"><span>Category</span>${esc(g.category||"—")}</div>
+        <div class="meta"><span>Type</span>${esc(g.invitationType||"—")}</div>
+        <div class="meta"><span>Seats</span>${g.seats||0}</div>
+        <div class="meta"><span>Vegetarian</span>${veg(g)} VEG</div>
+        <div class="meta"><span>Table</span>${esc(g.tableNo||"—")}</div>
+        <div class="meta"><span>Delivery</span>${esc(g.deliveryStatus||"Belum Dikirim")}</div>
+        <div class="meta"><span>Opened</span>${o.count}×</div>
+        <div class="meta"><span>Personal Code</span><span class="codebox">${esc(g.code)}</span></div>
+        <div class="meta"><span>First Opened</span>${fmtDate(o.first)}</div>
+        <div class="meta"><span>Last Opened</span>${fmtDate(o.last)}</div>
       </div>
-    </div>
-  `).join("") || '<div class="note">No guests.</div>';
 
-  $("mInv").textContent=guests.length;
-  $("mSeats").textContent=guests.reduce((a,g)=>a+(+g.seats||0),0);
-  $("mVeg").textContent=guests.reduce((a,g)=>a+veg(g),0);
-  $("mUnsent").textContent=guests.filter(g=>g.deliveryStatus==="Belum Dikirim").length;
-  $("mOpened").textContent=Object.keys(openCounts).filter(c=>openCounts[c]>0).length;
-  $("mWishes").textContent=wishDocs.length;
+      <div class="mobile-actions">
+        <button data-a="copy" data-c="${g.code}">Copy Link</button>
+        <button class="primary" data-a="wa" data-c="${g.code}">WhatsApp</button>
+        <button data-a="edit" data-c="${g.code}">Edit</button>
+        <button data-a="del" data-c="${g.code}">Delete</button>
+      </div>
+    </div>`;
+  }).join("") || '<div class="note">No guests found.</div>';
 
-  $("wishes").innerHTML=wishDocs.map(w=>`<div style="padding:10px 0;border-bottom:1px solid #eadccc"><b>${esc(w.name)}</b><div>${esc(w.message)}</div><button class="btn alt" style="margin-top:6px" data-wish="${w.id}">Delete</button></div>`).join("")||'<div class="note">No wishes.</div>';
+  // Metrics
+  const allStats = guests.map(g=>openStats(g.code));
+  $("mInv").textContent = guests.length;
+  $("mSeats").textContent = guests.reduce((a,g)=>a+(+g.seats||0),0);
+  $("mVeg").textContent = guests.reduce((a,g)=>a+veg(g),0);
+  $("mUnsent").textContent = guests.filter(g=>g.deliveryStatus==="Belum Dikirim").length;
+  $("mSent").textContent = guests.filter(g=>g.deliveryStatus==="Sudah Dikirim"||g.deliveryStatus==="Sudah Diserahkan").length;
+  $("mOpened").textContent = allStats.filter(s=>s.count>0).length;
+  $("mTotalOpens").textContent = allStats.reduce((a,s)=>a+s.count,0);
+  $("mWishes").textContent = wishDocs.length;
+
+  renderTableSummary();
+  renderCategorySummary();
+  renderWishes();
 }
-function members(existing=[]){const n=Math.max(1,+$("fSeats").value||1);$("memberFields").innerHTML="";for(let i=0;i<n;i++){const m=existing[i]||{name:i===0?$("fContact").value:"",meal:"Regular"};const d=document.createElement("div");d.className="member";d.innerHTML=`<input class="mn" value="${esc(m.name)}" placeholder="Guest ${i+1}"><select class="mm"><option ${m.meal==="Regular"?"selected":""}>Regular</option><option ${m.meal==="Vegetarian"?"selected":""}>Vegetarian</option></select>`;$("memberFields").appendChild(d)}}
-function open(g=null){editingCode=g?.code||null;$("modalTitle").textContent=g?"Edit Guest":"Add Guest";$("fName").value=g?.invitationName||"";$("fContact").value=g?.primaryContact||"";$("fPhone").value=g?.phone||"";$("fCategory").value=g?.category||categories[0];$("fType").value=g?.invitationType||"Digital";$("fSeats").value=g?.seats||2;$("fTable").value=g?.tableNo||"";$("fDelivery").value=g?.deliveryStatus||"Belum Dikirim";$("fNotes").value=g?.notes||"";members(g?.members||[]);$("modal").classList.add("open")}
-function close(){$("modal").classList.remove("open")}
-$("signIn").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("email").value,$("password").value);$("loginStatus").textContent=""}catch(e){$("loginStatus").textContent=e.message;$("loginStatus").className="status error"}};$("signOut").onclick=()=>fbSignOut(auth);onAuthStateChanged(auth,u=>{if(u){$("login").classList.add("hide");load()}else $("login").classList.remove("hide")});
-$("addBtn").onclick=()=>open();$("cancel").onclick=close;$("modal").onclick=e=>{if(e.target===$("modal"))close()};$("fSeats").oninput=()=>{const old=[...document.querySelectorAll(".member")].map(r=>({name:r.querySelector(".mn").value,meal:r.querySelector(".mm").value}));members(old)};$("search").oninput=render;$("catFilter").onchange=render;
-$("form").onsubmit=async e=>{e.preventDefault();const c=editingCode||mkCode();const ms=[...document.querySelectorAll(".member")].map((r,i)=>({name:r.querySelector(".mn").value.trim()||`Guest ${i+1}`,meal:r.querySelector(".mm").value}));const priv={invitationName:$("fName").value.trim(),primaryContact:$("fContact").value.trim(),phone:$("fPhone").value.trim(),category:$("fCategory").value,invitationType:$("fType").value,seats:+$("fSeats").value||1,tableNo:$("fTable").value.trim(),deliveryStatus:$("fDelivery").value,notes:$("fNotes").value.trim(),members:ms};await Promise.all([setDoc(doc(db,"privateInvitations",c),priv),setDoc(doc(db,"invitations",c),{invitationName:priv.invitationName,seats:priv.seats})]);close();await load()};
-async function handleGuestAction(e){
-  const b=e.target.closest("button[data-a]");
-  if(!b)return;
-  const g=guests.find(x=>x.code===b.dataset.c);
-  if(!g)return;
-  if(b.dataset.a==="copy"){
-    try{await navigator.clipboard.writeText(link(g));alert("Personal link copied:\n"+link(g))}
-    catch{prompt("Copy this personal link:",link(g))}
+
+function renderTableSummary(){
+  const map = {};
+  guests.forEach(g=>{
+    const t = String(g.tableNo||"").trim() || "Unassigned";
+    map[t] = (map[t]||0) + (+g.seats||0);
+  });
+
+  $("tableSummary").innerHTML = Object.entries(map)
+    .sort((a,b)=>String(a[0]).localeCompare(String(b[0]),undefined,{numeric:true}))
+    .map(([t,seats])=>`
+      <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eadccc">
+        <span>Table ${esc(t)}</span><b>${seats} seats</b>
+      </div>`).join("") || '<div class="note">No table assignments yet.</div>';
+}
+
+function renderCategorySummary(){
+  const map = Object.fromEntries(categories.map(c=>[c,0]));
+  guests.forEach(g=>map[g.category]=(map[g.category]||0)+1);
+
+  $("categorySummary").innerHTML = categories.map(c=>`
+    <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eadccc">
+      <span>${esc(c)}</span><b>${map[c]||0}</b>
+    </div>`).join("");
+}
+
+function renderWishes(){
+  $("wishes").innerHTML = wishDocs.map(w=>`
+    <div class="wish-row">
+      <b>${esc(w.name)}</b>
+      <div style="margin:5px 0">${esc(w.message)}</div>
+      <div class="note">${fmtDate(w.createdAt)}</div>
+      <button class="btn alt" style="margin-top:7px" data-wish="${w.id}">Delete</button>
+    </div>`).join("") || '<div class="note">No wishes yet.</div>';
+}
+
+function members(existing=[]){
+  const n = Math.max(1,+$("fSeats").value||1);
+  $("memberFields").innerHTML = "";
+
+  for(let i=0;i<n;i++){
+    const m = existing[i] || { name:i===0?$("fContact").value:"", meal:"Regular" };
+    const d = document.createElement("div");
+    d.className = "member";
+    d.innerHTML = `
+      <input class="mn" value="${esc(m.name)}" placeholder="Guest ${i+1}">
+      <select class="mm">
+        <option ${m.meal==="Regular"?"selected":""}>Regular</option>
+        <option ${m.meal==="Vegetarian"?"selected":""}>Vegetarian</option>
+      </select>`;
+    $("memberFields").appendChild(d);
   }
-  if(b.dataset.a==="wa")window.open(wa(g),"_blank");
-  if(b.dataset.a==="edit")open(g);
-  if(b.dataset.a==="del"&&confirm("Delete this invitation?")){
-    await Promise.all([deleteDoc(doc(db,"privateInvitations",g.code)),deleteDoc(doc(db,"invitations",g.code))]);
+}
+
+function openModal(g=null){
+  editingCode = g?.code || null;
+  $("modalTitle").textContent = g ? "Edit Guest" : "Add Guest";
+  $("fName").value = g?.invitationName || "";
+  $("fContact").value = g?.primaryContact || "";
+  $("fPhone").value = g?.phone || "";
+  $("fCategory").value = g?.category || categories[0];
+  $("fType").value = g?.invitationType || "Digital";
+  $("fSeats").value = g?.seats || 2;
+  $("fTable").value = g?.tableNo || "";
+  $("fDelivery").value = g?.deliveryStatus || "Belum Dikirim";
+  $("fNotes").value = g?.notes || "";
+  members(g?.members || []);
+  $("modal").classList.add("open");
+}
+
+function closeModal(){
+  $("modal").classList.remove("open");
+}
+
+async function handleGuestAction(e){
+  const b = e.target.closest("button[data-a]");
+  if(!b) return;
+
+  const g = guests.find(x=>x.code===b.dataset.c);
+  if(!g) return;
+
+  if(b.dataset.a==="copy"){
+    try{
+      await navigator.clipboard.writeText(personalLink(g));
+      alert("Personal link copied:\n"+personalLink(g));
+    }catch{
+      prompt("Copy this personal link:",personalLink(g));
+    }
+  }
+
+  if(b.dataset.a==="wa"){
+    // Open WhatsApp first.
+    window.open(whatsappLink(g),"_blank");
+
+    // Automatically record as sent if it was not sent yet.
+    if(g.deliveryStatus==="Belum Dikirim"){
+      try{
+        await updateDoc(doc(db,"privateInvitations",g.code),{
+          deliveryStatus:"Sudah Dikirim",
+          sentAt:serverTimestamp()
+        });
+        setTimeout(load,700);
+      }catch(err){
+        console.error(err);
+      }
+    }
+  }
+
+  if(b.dataset.a==="edit") openModal(g);
+
+  if(b.dataset.a==="del" && confirm("Delete this invitation?")){
+    await Promise.all([
+      deleteDoc(doc(db,"privateInvitations",g.code)),
+      deleteDoc(doc(db,"invitations",g.code))
+    ]);
     await load();
   }
 }
-$("rows").onclick=handleGuestAction;
-$("mobileRows").onclick=handleGuestAction;
 
-/* legacy handler removed */
-const __unusedGuestHandler = async e=>{const b=e.target.closest("button[data-a]");if(!b)return;const g=guests.find(x=>x.code===b.dataset.c);if(!g)return;if(b.dataset.a==="copy"){try{await navigator.clipboard.writeText(link(g));alert("Copied")}catch{prompt("Copy link:",link(g))}}if(b.dataset.a==="wa")window.open(wa(g),"_blank");if(b.dataset.a==="edit")open(g);if(b.dataset.a==="del"&&confirm("Delete this invitation?")){await Promise.all([deleteDoc(doc(db,"privateInvitations",g.code)),deleteDoc(doc(db,"invitations",g.code))]);await load()}};
-$("wishes").onclick=async e=>{const b=e.target.closest("button[data-wish]");if(!b)return;if(confirm("Delete this wish?")){await deleteDoc(doc(db,"wishes",b.dataset.wish));await load()}};
-</script></body></html>
+$("signIn").onclick = async()=>{
+  try{
+    await signInWithEmailAndPassword(auth,$("email").value,$("password").value);
+    $("loginStatus").textContent="";
+  }catch(err){
+    $("loginStatus").textContent=err.message;
+    $("loginStatus").className="status error";
+  }
+};
+
+$("signOut").onclick = ()=>fbSignOut(auth);
+$("reloadBtn").onclick = load;
+$("addBtn").onclick = ()=>openModal();
+$("cancel").onclick = closeModal;
+$("modal").onclick = e=>{ if(e.target===$("modal")) closeModal(); };
+
+$("fSeats").oninput = ()=>{
+  const old=[...document.querySelectorAll(".member")].map(r=>({
+    name:r.querySelector(".mn").value,
+    meal:r.querySelector(".mm").value
+  }));
+  members(old);
+};
+
+$("form").onsubmit = async e=>{
+  e.preventDefault();
+  const c = editingCode || mkCode();
+
+  const memberData=[...document.querySelectorAll(".member")].map((r,i)=>({
+    name:r.querySelector(".mn").value.trim() || `Guest ${i+1}`,
+    meal:r.querySelector(".mm").value
+  }));
+
+  const old = guests.find(g=>g.code===c);
+
+  const priv = {
+    invitationName:$("fName").value.trim(),
+    primaryContact:$("fContact").value.trim(),
+    phone:$("fPhone").value.trim(),
+    category:$("fCategory").value,
+    invitationType:$("fType").value,
+    seats:+$("fSeats").value || 1,
+    tableNo:$("fTable").value.trim(),
+    deliveryStatus:$("fDelivery").value,
+    notes:$("fNotes").value.trim(),
+    members:memberData
+  };
+
+  // Preserve sentAt if it already exists.
+  if(old?.sentAt) priv.sentAt = old.sentAt;
+
+  await Promise.all([
+    setDoc(doc(db,"privateInvitations",c),priv,{merge:true}),
+    setDoc(doc(db,"invitations",c),{
+      invitationName:priv.invitationName,
+      seats:priv.seats
+    },{merge:true})
+  ]);
+
+  closeModal();
+  await load();
+};
+
+$("rows").onclick = handleGuestAction;
+$("mobileRows").onclick = handleGuestAction;
+
+$("wishes").onclick = async e=>{
+  const b=e.target.closest("button[data-wish]");
+  if(!b) return;
+
+  if(confirm("Delete this wish?")){
+    await deleteDoc(doc(db,"wishes",b.dataset.wish));
+    await load();
+  }
+};
+
+["search","catFilter","vegFilter","tableFilter","deliveryFilter","sortBy"].forEach(id=>{
+  $(id).addEventListener(id==="search"?"input":"change",render);
+});
+
+onAuthStateChanged(auth,u=>{
+  if(u){
+    $("login").classList.add("hide");
+    load();
+  }else{
+    $("login").classList.remove("hide");
+  }
+});
+</script>
+</body>
+</html>
