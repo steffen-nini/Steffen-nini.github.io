@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#681E2A">
-<meta name="build" content="final-uiux-v5-5-cross-platform-title-2026-09-27">
+<meta name="build" content="final-uiux-v5-6-responsive-title-stack-2026-09-27">
 <meta name="description" content="The Wedding of Steffen & Nini — 29 November 2026">
 <meta property="og:title" content="The Wedding of Steffen & Nini">
 <meta property="og:description" content="29 November 2026">
@@ -254,8 +254,16 @@ main{overflow:hidden}
   color:var(--deep);
   font:500 clamp(3.45rem,10vw,6.75rem)/.9 Georgia,"Times New Roman",serif;
   letter-spacing:-.055em;
-  white-space:nowrap;
   max-width:100%;
+}
+.couple-title{
+  white-space:nowrap;
+}
+.couple-title > span{
+  display:inline;
+}
+.couple-title .amp{
+  margin:0 .08em;
 }
 .hero-date{font-size:.76rem;font-weight:800;letter-spacing:.2em}
 .hero-cn{margin-top:8px;color:var(--taupe);font-size:1rem}
@@ -794,10 +802,9 @@ footer{
   .gate-card{padding:36px 22px 32px}
   .hero{padding:88px 0 72px}
   .hero h1{
-    font-size:clamp(2.75rem,13.6vw,4.4rem);
+    font-size:clamp(2.9rem,14vw,4.5rem);
     line-height:.92;
-    letter-spacing:-.065em;
-    white-space:nowrap;
+    letter-spacing:-.06em;
   }
   .personal-note{width:calc(100% - 28px)}
   .countdown-card{border-radius:20px}
@@ -811,10 +818,26 @@ footer{
   .quote-cn{font-size:1.19rem}
   .closing{min-height:68svh}
 }
+@media(max-width:430px){
+  .couple-title{
+    white-space:normal;
+    font-size:clamp(3.25rem,16vw,4.25rem);
+    line-height:.82;
+    letter-spacing:-.065em;
+  }
+  .couple-title > span{
+    display:block;
+  }
+  .couple-title .amp{
+    margin:.10em 0 .08em;
+    font-size:.72em;
+    line-height:.8;
+  }
+}
+
 @media(max-width:390px){
-  .hero h1{
-    font-size:clamp(2.55rem,13.2vw,3.35rem);
-    letter-spacing:-.07em;
+  .couple-title{
+    font-size:clamp(3.05rem,15.5vw,3.85rem);
   }
   .countdown-item b{font-size:1.5rem}
   .countdown-item span{font-size:.55rem;letter-spacing:.08em}
@@ -865,7 +888,7 @@ footer{
       <div class="hero-mark">囍</div>
       <div class="hero-monogram">S &amp; N</div>
       <div class="smallcaps">The Wedding of</div>
-      <h1>Steffen &amp; Nini</h1>
+      <h1 class="couple-title"><span>Steffen</span><span class="amp">&amp;</span><span>Nini</span></h1>
       <div class="hero-date">29 NOVEMBER 2026</div>
       <div class="hero-cn serif">农历丙午年十月廿一</div>
       <div class="hero-actions">
