@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#681E2A">
-<meta name="build" content="final-uiux-v5-4-lunar-date-2026-09-27">
+<meta name="build" content="final-uiux-v5-5-cross-platform-title-2026-09-27">
 <meta name="description" content="The Wedding of Steffen & Nini — 29 November 2026">
 <meta property="og:title" content="The Wedding of Steffen & Nini">
 <meta property="og:description" content="29 November 2026">
@@ -252,8 +252,10 @@ main{overflow:hidden}
 .hero h1{
   margin:12px 0 18px;
   color:var(--deep);
-  font:500 clamp(3.45rem,10vw,6.75rem)/.9 Georgia,serif;
+  font:500 clamp(3.45rem,10vw,6.75rem)/.9 Georgia,"Times New Roman",serif;
   letter-spacing:-.055em;
+  white-space:nowrap;
+  max-width:100%;
 }
 .hero-date{font-size:.76rem;font-weight:800;letter-spacing:.2em}
 .hero-cn{margin-top:8px;color:var(--taupe);font-size:1rem}
@@ -791,7 +793,12 @@ footer{
   .section.compact{padding:56px 0}
   .gate-card{padding:36px 22px 32px}
   .hero{padding:88px 0 72px}
-  .hero h1{font-size:clamp(3.25rem,17vw,5.2rem)}
+  .hero h1{
+    font-size:clamp(2.75rem,13.6vw,4.4rem);
+    line-height:.92;
+    letter-spacing:-.065em;
+    white-space:nowrap;
+  }
   .personal-note{width:calc(100% - 28px)}
   .countdown-card{border-radius:20px}
   .countdown-item{padding:22px 5px}
@@ -805,6 +812,10 @@ footer{
   .closing{min-height:68svh}
 }
 @media(max-width:390px){
+  .hero h1{
+    font-size:clamp(2.55rem,13.2vw,3.35rem);
+    letter-spacing:-.07em;
+  }
   .countdown-item b{font-size:1.5rem}
   .countdown-item span{font-size:.55rem;letter-spacing:.08em}
   .btn{padding-inline:17px}
