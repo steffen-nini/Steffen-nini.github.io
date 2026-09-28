@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Steffen & Nini — Wedding Admin V2.3</title>
+<title>Steffen & Nini — Wedding Admin V2.5</title>
 <style>
 :root{
   --ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;
@@ -81,7 +81,9 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .field label{display:block;color:var(--taupe);font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
 .full{grid-column:1/-1}
 .members{margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
-.member{display:grid;grid-template-columns:1fr 145px;gap:8px;margin:7px 0}
+.member{margin:12px 0;padding:12px;border:1px solid #eadccc;border-radius:13px;background:#fffaf5}
+.member-title{font-weight:700;color:var(--deep);margin-bottom:8px;font-size:.82rem}
+.member-grid{display:grid;grid-template-columns:145px 1fr 145px;gap:8px}
 .dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
 
 .section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
@@ -101,7 +103,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   .mobile-list{display:block}
   .form-grid,.stats-row{grid-template-columns:1fr}
   .full{grid-column:auto}
-  .member{grid-template-columns:1fr}
+  .member-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -109,7 +111,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <div class="login" id="login">
   <div class="loginbox">
     <div style="font-size:2.5rem;color:#9E2A2B">囍</div>
-    <h2>Wedding Admin V2.3</h2>
+    <h2>Wedding Admin V2.5</h2>
     <input id="email" type="email" placeholder="Admin email">
     <input id="password" type="password" placeholder="Password">
     <button class="btn" id="signIn">Sign in</button>
@@ -120,7 +122,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <main>
   <div class="top">
     <div>
-      <h1>Steffen &amp; Nini — Admin V2.3</h1>
+      <h1>Steffen &amp; Nini — Admin V2.5</h1>
       <div class="note">29 November 2026 • Firebase live</div>
     </div>
     <div>
@@ -224,7 +226,11 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     <h2 id="modalTitle">Add Guest</h2>
     <form id="form">
       <div class="form-grid">
-        <div class="field full"><label>Invitation Name</label><input id="fName" required placeholder="Mr. Michael & Partner"></div>
+        <div class="field full">
+          <label>Invitation Name Preview</label>
+          <input id="fName" readonly tabindex="-1" style="background:#f5eee7;color:#6c5750">
+          <div class="note" style="margin-top:5px">Otomatis disusun dari Guest 1, Guest 2, dan seterusnya.</div>
+        </div>
         <div class="field"><label>Primary Contact</label><input id="fContact" required></div>
         <div class="field"><label>WhatsApp</label><input id="fPhone" placeholder="+62812..."></div>
         <div class="field"><label>WhatsApp Status</label><select id="fWaStatus"><option>Belum Dicek</option><option>Valid</option><option>Invalid</option></select></div>
@@ -237,8 +243,8 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
       </div>
 
       <div class="members">
-        <b>Guest Members & Meal</b>
-        <div class="note">Vegetarian ditandai per orang.</div>
+        <b>Guest Details</b>
+        <div class="note">Pilih gelar dan isi nama untuk setiap guest. Vegetarian ditandai per orang.</div>
         <div id="memberFields"></div>
       </div>
 
@@ -304,6 +310,43 @@ function mkCode(){
   let s="";
   for(let i=0;i<6;i++) s += chars[Math.floor(Math.random()*chars.length)];
   return s;
+}
+
+function normalizeTitle(title){
+  return String(title || "").trim();
+}
+
+function formatGuestDisplay(title, name){
+  const t = normalizeTitle(title);
+  const n = String(name || "").trim();
+  if(!n) return "";
+  return t ? `${t} ${n}` : n;
+}
+
+function splitPersonName(fullName){
+  const full = String(fullName || "").trim();
+  const titles = ["Mr.","Mrs.","Ms.","Dr.","Prof.","Rev."];
+
+  for(const title of titles){
+    if(full.toLowerCase().startsWith(title.toLowerCase() + " ")){
+      return {
+        title,
+        name:full.slice(title.length).trim()
+      };
+    }
+  }
+
+  return { title:"", name:full };
+}
+
+function refreshInvitationPreview(){
+  const people = [...document.querySelectorAll(".member")].map(row => {
+    const title = row.querySelector(".mt")?.value || "";
+    const name = row.querySelector(".mn")?.value || "";
+    return formatGuestDisplay(title, name);
+  }).filter(Boolean);
+
+  $("fName").value = people.join(" & ");
 }
 
 function veg(g){
@@ -717,17 +760,42 @@ function members(existing=[]){
   $("memberFields").innerHTML = "";
 
   for(let i=0;i<n;i++){
-    const m = existing[i] || { name:i===0?$("fContact").value:"", meal:"Regular" };
+    const old = existing[i] || {};
+    const parsed = splitPersonName(old.name || "");
+
+    const title = old.title || parsed.title || "";
+    const name = old.baseName || parsed.name || "";
+    const meal = old.meal || "Regular";
+
     const d = document.createElement("div");
     d.className = "member";
     d.innerHTML = `
-      <input class="mn" value="${esc(m.name)}" placeholder="Guest ${i+1}">
-      <select class="mm">
-        <option ${m.meal==="Regular"?"selected":""}>Regular</option>
-        <option ${m.meal==="Vegetarian"?"selected":""}>Vegetarian</option>
-      </select>`;
+      <div class="member-title">Guest ${i+1}</div>
+      <div class="member-grid">
+        <select class="mt" aria-label="Guest ${i+1} title">
+          <option value="" ${title===""?"selected":""}>Tanpa Gelar</option>
+          <option value="Mr." ${title==="Mr."?"selected":""}>Mr.</option>
+          <option value="Mrs." ${title==="Mrs."?"selected":""}>Mrs.</option>
+          <option value="Ms." ${title==="Ms."?"selected":""}>Ms.</option>
+          <option value="Dr." ${title==="Dr."?"selected":""}>Dr.</option>
+          <option value="Prof." ${title==="Prof."?"selected":""}>Prof.</option>
+          <option value="Rev." ${title==="Rev."?"selected":""}>Rev.</option>
+        </select>
+
+        <input class="mn" value="${esc(name)}" placeholder="Nama Guest ${i+1}" aria-label="Guest ${i+1} name">
+
+        <select class="mm" aria-label="Guest ${i+1} meal">
+          <option ${meal==="Regular"?"selected":""}>Regular</option>
+          <option ${meal==="Vegetarian"?"selected":""}>Vegetarian</option>
+        </select>
+      </div>`;
     $("memberFields").appendChild(d);
+
+    d.querySelector(".mt").addEventListener("change", refreshInvitationPreview);
+    d.querySelector(".mn").addEventListener("input", refreshInvitationPreview);
   }
+
+  refreshInvitationPreview();
 }
 
 function openModal(g=null){
@@ -859,21 +927,51 @@ $("cancel").onclick = closeModal;
 $("modal").onclick = e=>{ if(e.target===$("modal")) closeModal(); };
 
 $("fSeats").oninput = ()=>{
-  const old=[...document.querySelectorAll(".member")].map(r=>({
-    name:r.querySelector(".mn").value,
-    meal:r.querySelector(".mm").value
-  }));
+  const old=[...document.querySelectorAll(".member")].map(r=>{
+    const title = r.querySelector(".mt")?.value || "";
+    const baseName = r.querySelector(".mn")?.value || "";
+    return {
+      title,
+      baseName,
+      name:formatGuestDisplay(title, baseName),
+      meal:r.querySelector(".mm")?.value || "Regular"
+    };
+  });
   members(old);
 };
 
 $("form").onsubmit = async e=>{
   e.preventDefault();
+
+  refreshInvitationPreview();
+
+  const memberRows = [...document.querySelectorAll(".member")];
+  const firstEmpty = memberRows.find(r => !r.querySelector(".mn").value.trim());
+
+  if(firstEmpty){
+    alert("Nama setiap guest harus diisi.");
+    firstEmpty.querySelector(".mn").focus();
+    return;
+  }
+
+  if(!$("fName").value.trim()){
+    alert("Isi nama guest terlebih dahulu.");
+    return;
+  }
+
   const c = editingCode || mkCode();
 
-  const memberData=[...document.querySelectorAll(".member")].map((r,i)=>({
-    name:r.querySelector(".mn").value.trim() || `Guest ${i+1}`,
-    meal:r.querySelector(".mm").value
-  }));
+  const memberData=memberRows.map((r,i)=>{
+    const title = r.querySelector(".mt")?.value || "";
+    const baseName = r.querySelector(".mn").value.trim();
+
+    return {
+      title,
+      baseName,
+      name:formatGuestDisplay(title, baseName),
+      meal:r.querySelector(".mm").value
+    };
+  });
 
   const old = guests.find(g=>g.code===c);
 
