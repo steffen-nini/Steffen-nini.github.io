@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Steffen & Nini — Wedding Admin V2.2</title>
+<title>Steffen & Nini — Wedding Admin V2.3</title>
 <style>
 :root{
   --ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;
@@ -24,6 +24,10 @@ h1{margin:0;font-size:clamp(2rem,6vw,3.2rem)}
 .btn{border:1px solid var(--red);background:var(--red);color:#fff;padding:10px 13px;border-radius:12px;font-weight:700}
 .btn.alt{background:transparent;color:var(--red)}
 .btn.soft{background:#fff8f3;color:var(--red);border-color:#dec5b5}
+.btn.syncing{opacity:.65;cursor:wait}
+.sync-note{font-size:.72rem;color:var(--taupe);margin-top:7px;text-align:right}
+.sync-note.ok{color:var(--green)}
+.sync-note.error{color:#a3272d}
 .note{font-size:.76rem;color:var(--taupe);line-height:1.45}
 .status{font-size:.78rem;margin-top:8px}
 .ok{color:var(--green)} .error{color:#a3272d}
@@ -105,7 +109,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <div class="login" id="login">
   <div class="loginbox">
     <div style="font-size:2.5rem;color:#9E2A2B">囍</div>
-    <h2>Wedding Admin V2</h2>
+    <h2>Wedding Admin V2.3</h2>
     <input id="email" type="email" placeholder="Admin email">
     <input id="password" type="password" placeholder="Password">
     <button class="btn" id="signIn">Sign in</button>
@@ -116,13 +120,18 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <main>
   <div class="top">
     <div>
-      <h1>Steffen &amp; Nini — Admin V2.2</h1>
+      <h1>Steffen &amp; Nini — Admin V2.3</h1>
       <div class="note">29 November 2026 • Firebase live</div>
     </div>
-    <div class="top-actions">
-      <button class="btn" id="addBtn">+ Add Guest</button>
-      <button class="btn alt" id="reloadBtn">Refresh</button>
-      <button class="btn alt" id="signOut">Sign out</button>
+    <div>
+      <div class="top-actions">
+        <button class="btn" id="addBtn">+ Add Guest</button>
+        <button class="btn soft" id="syncSheetBtn">Sync to Google Sheet</button>
+        <button class="btn alt" id="openSheetBtn">Open Google Sheet</button>
+        <button class="btn alt" id="reloadBtn">Refresh</button>
+        <button class="btn alt" id="signOut">Sign out</button>
+      </div>
+      <div class="sync-note" id="syncSheetStatus">Google Sheet mirror • not synced this session</div>
     </div>
   </div>
 
@@ -268,6 +277,9 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const $ = id => document.getElementById(id);
 
+const SHEET_SYNC_URL = "https://script.google.com/macros/s/AKfycbzQfUGReiwpmfsSIxCL4i7UhCBuBGwBF_bhoD7YBN8OXS372xVVBKQBOkWrDHFiw_5DsA/exec";
+const GUEST_MASTER_URL = "https://docs.google.com/spreadsheets/d/16RFxgTh7HK300ULaecCuRQau3vJLfzZkfNdLv3U2PxA/edit";
+
 const categories = [
   "Keluarga Steffen","Keluarga Nini","Teman Steffen","Teman Nini",
   "Teman Bersama","Business / Relasi","VIP","Lainnya"
@@ -360,6 +372,157 @@ function openStats(code){
     first: ev[0] || null,
     last: ev[ev.length-1] || null
   };
+}
+
+function isoDate(v){
+  const d = toDateSafe(v);
+  return d ? d.toISOString() : "";
+}
+
+function buildSheetPayload(){
+  const guestPayload = guests.map(g => {
+    const o = openStats(g.code);
+    return {
+      code:g.code || "",
+      invitationName:g.invitationName || "",
+      primaryContact:g.primaryContact || "",
+      phone:g.phone || "",
+      whatsappStatus:g.whatsappStatus || "Belum Dicek",
+      category:g.category || "",
+      invitationType:g.invitationType || "",
+      seats:Number(g.seats || 0),
+      tableNo:g.tableNo || "",
+      deliveryStatus:g.deliveryStatus || "Belum Dikirim",
+      sentAt:isoDate(g.sentAt),
+      notes:g.notes || "",
+      members:Array.isArray(g.members) ? g.members.map(m => ({
+        name:m?.name || "",
+        meal:m?.meal || "Regular",
+        notes:m?.notes || ""
+      })) : [],
+      openCount:o.count,
+      firstOpened:o.first ? o.first.toISOString() : "",
+      lastOpened:o.last ? o.last.toISOString() : ""
+    };
+  });
+
+  const wishPayload = wishDocs.map(w => ({
+    id:w.id || "",
+    code:w.code || "",
+    name:w.name || "",
+    message:w.message || "",
+    createdAt:isoDate(w.createdAt)
+  }));
+
+  return {
+    guests:guestPayload,
+    wishes:wishPayload,
+    generatedAt:new Date().toISOString()
+  };
+}
+
+function postToSheetSync(idToken, payload){
+  return new Promise((resolve, reject) => {
+    const frameName = "sheetSync_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    const iframe = document.createElement("iframe");
+    iframe.name = frameName;
+    iframe.style.display = "none";
+    iframe.setAttribute("aria-hidden","true");
+    document.body.appendChild(iframe);
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = SHEET_SYNC_URL;
+    form.target = frameName;
+    form.style.display = "none";
+
+    const addField = (name, value) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    };
+
+    addField("id_token", idToken);
+    addField("payload", JSON.stringify(payload));
+    document.body.appendChild(form);
+
+    let settled = false;
+    const cleanup = () => {
+      window.removeEventListener("message", onMessage);
+      form.remove();
+      setTimeout(() => iframe.remove(), 100);
+    };
+
+    const timer = setTimeout(() => {
+      if(settled) return;
+      settled = true;
+      cleanup();
+      reject(new Error("Sync timeout. Coba sekali lagi."));
+    }, 30000);
+
+    const onMessage = (event) => {
+      if(event.source !== iframe.contentWindow) return;
+      const data = event.data;
+      if(!data || data.source !== "steffen-nini-sheet-sync") return;
+
+      if(settled) return;
+      settled = true;
+      clearTimeout(timer);
+      cleanup();
+
+      if(data.result?.ok){
+        resolve(data.result);
+      }else{
+        reject(new Error(data.result?.error || "Google Sheet sync failed."));
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+    form.submit();
+  });
+}
+
+async function syncToGoogleSheet(){
+  const user = auth.currentUser;
+  if(!user){
+    throw new Error("Admin belum login.");
+  }
+
+  const btn = $("syncSheetBtn");
+  const status = $("syncSheetStatus");
+
+  btn.disabled = true;
+  btn.classList.add("syncing");
+  btn.textContent = "Syncing…";
+  status.textContent = "Sending Firebase data to Google Sheet…";
+  status.className = "sync-note";
+
+  try{
+    // Fresh Firebase ID token is verified again by Apps Script.
+    const idToken = await user.getIdToken(true);
+    const result = await postToSheetSync(idToken, buildSheetPayload());
+
+    const stamp = new Intl.DateTimeFormat("id-ID",{
+      day:"2-digit",month:"short",year:"numeric",
+      hour:"2-digit",minute:"2-digit",
+      timeZone:"Asia/Jakarta",hour12:false
+    }).format(new Date());
+
+    status.textContent = `Synced • ${result.invitations ?? guests.length} invitations • ${result.wishes ?? wishDocs.length} wishes • ${stamp} WIB`;
+    status.className = "sync-note ok";
+    return result;
+  }catch(err){
+    console.error("Google Sheet sync failed:", err);
+    status.textContent = "Sync failed • " + err.message;
+    status.className = "sync-note error";
+    throw err;
+  }finally{
+    btn.disabled = false;
+    btn.classList.remove("syncing");
+    btn.textContent = "Sync to Google Sheet";
+  }
 }
 
 async function load(){
@@ -684,6 +847,14 @@ $("signIn").onclick = async()=>{
 $("signOut").onclick = ()=>fbSignOut(auth);
 $("reloadBtn").onclick = load;
 $("addBtn").onclick = ()=>openModal();
+$("openSheetBtn").onclick = ()=>window.open(GUEST_MASTER_URL,"_blank");
+$("syncSheetBtn").onclick = async()=>{
+  try{
+    await syncToGoogleSheet();
+  }catch(err){
+    alert("Google Sheet sync gagal: " + err.message);
+  }
+};
 $("cancel").onclick = closeModal;
 $("modal").onclick = e=>{ if(e.target===$("modal")) closeModal(); };
 
@@ -758,6 +929,8 @@ onAuthStateChanged(auth,u=>{
     load();
   }else{
     $("login").classList.remove("hide");
+    $("syncSheetStatus").textContent = "Google Sheet mirror • not synced this session";
+    $("syncSheetStatus").className = "sync-note";
   }
 });
 </script>
