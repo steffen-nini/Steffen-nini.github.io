@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Steffen & Nini — Wedding Admin V2.7</title>
+<title>Steffen & Nini — Wedding Admin V2.8</title>
 <style>
 :root{
   --ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;
@@ -111,7 +111,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <div class="login" id="login">
   <div class="loginbox">
     <div style="font-size:2.5rem;color:#9E2A2B">囍</div>
-    <h2>Wedding Admin V2.7</h2>
+    <h2>Wedding Admin V2.8</h2>
     <input id="email" type="email" placeholder="Admin email">
     <input id="password" type="password" placeholder="Password">
     <button class="btn" id="signIn">Sign in</button>
@@ -122,7 +122,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <main>
   <div class="top">
     <div>
-      <h1>Steffen &amp; Nini — Admin V2.7</h1>
+      <h1>Steffen &amp; Nini — Admin V2.8</h1>
       <div class="note">29 November 2026 • Firebase live</div>
     </div>
     <div>
@@ -533,69 +533,53 @@ async function postToSheetSync(idToken, payload){
     Date.now().toString(36) + "_" +
     Math.random().toString(36).slice(2,12);
 
-  const frameName = "sheetSyncFrame_" + sessionId;
-  const iframe = document.createElement("iframe");
-  iframe.name = frameName;
-  iframe.style.display = "none";
-  iframe.setAttribute("aria-hidden","true");
-  document.body.appendChild(iframe);
+  const body = new URLSearchParams();
+  body.set("session_id", sessionId);
+  body.set("id_token", idToken);
+  body.set("payload", JSON.stringify(payload));
 
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = SHEET_SYNC_URL;
-  form.target = frameName;
-  form.style.display = "none";
+  // Fire-and-confirm pattern:
+  // Apps Script response itself is opaque cross-origin, so success is confirmed
+  // separately through the public JSONP status endpoint.
+  await fetch(SHEET_SYNC_URL, {
+    method:"POST",
+    mode:"no-cors",
+    cache:"no-store",
+    body
+  });
 
-  const addField = (name, value) => {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = name;
-    input.value = value;
-    form.appendChild(input);
-  };
+  const deadline = Date.now() + 50000;
+  let lastState = "unknown";
+  let lastPollError = "";
 
-  addField("session_id", sessionId);
-  addField("id_token", idToken);
-  addField("payload", JSON.stringify(payload));
-  document.body.appendChild(form);
+  await delay(1200);
 
-  try{
-    form.submit();
+  while(Date.now() < deadline){
+    try{
+      const status = await getSheetSyncStatus(sessionId);
+      lastState = status?.state || "unknown";
+      lastPollError = "";
 
-    const deadline = Date.now() + 50000;
-    let lastState = "unknown";
-
-    await delay(1200);
-
-    while(Date.now() < deadline){
-      try{
-        const status = await getSheetSyncStatus(sessionId);
-        lastState = status?.state || "unknown";
-
-        if(status?.state === "success" && status?.ok){
-          return status;
-        }
-
-        if(status?.state === "error"){
-          throw new Error(status.error || "Google Sheet sync failed.");
-        }
-      }catch(err){
-        // A temporary JSONP load failure can happen while the POST is still redirecting.
-        console.warn("Sync status poll:", err);
+      if(status?.state === "success" && status?.ok){
+        return status;
       }
 
-      await delay(1400);
+      if(status?.state === "error"){
+        throw new Error(status.error || "Google Sheet sync failed.");
+      }
+    }catch(err){
+      lastPollError = err?.message || String(err);
+      console.warn("Sync status poll:", err);
     }
 
-    throw new Error(
-      "Sync belum mendapat konfirmasi dari Apps Script. " +
-      "Pastikan deployment Web App memakai 'Who has access: Anyone', lalu coba lagi. " +
-      "(status terakhir: " + lastState + ")"
-    );
-  }finally{
-    form.remove();
-    setTimeout(() => iframe.remove(), 100);
+    await delay(1400);
   }
+
+  throw new Error(
+    "Sync belum mendapat konfirmasi dari Apps Script. " +
+    "Status terakhir: " + lastState +
+    (lastPollError ? " • Poll: " + lastPollError : "")
+  );
 }
 
 async function syncToGoogleSheet(){
