@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Steffen & Nini — Wedding Admin V3.0</title>
+<title>Steffen & Nini — Wedding Admin V3.2</title>
 <style>
 :root{
   --ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;
@@ -38,7 +38,7 @@ h1{margin:0;font-size:clamp(2rem,6vw,3.2rem)}
 .card b{display:block;color:var(--red);font:500 1.65rem Georgia,serif;margin-top:6px}
 
 .panel{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 10px 30px rgba(70,40,35,.04)}
-.toolbar{display:grid;grid-template-columns:2fr repeat(5,minmax(130px,1fr));gap:8px;margin-bottom:12px}
+.toolbar{display:grid;grid-template-columns:2fr repeat(7,minmax(125px,1fr));gap:8px;margin-bottom:12px}
 input,select,textarea{border:1px solid #dbc8b7;background:#fffdfa;border-radius:11px;padding:10px 11px;color:var(--ink);width:100%}
 
 .desktop-wrap{overflow:auto}
@@ -111,7 +111,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <div class="login" id="login">
   <div class="loginbox">
     <div style="font-size:2.5rem;color:#9E2A2B">囍</div>
-    <h2>Wedding Admin V3.0</h2>
+    <h2>Wedding Admin V3.2</h2>
     <input id="email" type="email" placeholder="Admin email">
     <input id="password" type="password" placeholder="Password">
     <button class="btn" id="signIn">Sign in</button>
@@ -122,7 +122,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <main>
   <div class="top">
     <div>
-      <h1>Steffen &amp; Nini — Admin V3.0</h1>
+      <h1>Steffen &amp; Nini — Admin V3.2</h1>
       <div class="note">29 November 2026 • Firebase live</div>
     </div>
     <div>
@@ -130,6 +130,8 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
         <button class="btn" id="addBtn">+ Add Guest</button>
         <button class="btn soft" id="syncSheetBtn">Sync to Google Sheet</button>
         <button class="btn alt" id="openSheetBtn">Open Google Sheet</button>
+        <button class="btn alt" id="openCheckinBtn">WO Check-in</button>
+        <button class="btn alt" id="cleanTestBtn">Clean Test Data</button>
         <button class="btn alt" id="reloadBtn">Refresh</button>
         <button class="btn alt" id="signOut">Sign out</button>
       </div>
@@ -147,6 +149,10 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     <div class="card"><span>Opened guests</span><b id="mOpened">0</b></div>
     <div class="card"><span>Total opens</span><b id="mTotalOpens">0</b></div>
     <div class="card"><span>Wishes</span><b id="mWishes">0</b></div>
+    <div class="card"><span>RSVP Hadir</span><b id="mRsvpYes">0</b></div>
+    <div class="card"><span>RSVP Tidak Hadir</span><b id="mRsvpNo">0</b></div>
+    <div class="card"><span>Belum RSVP</span><b id="mRsvpPending">0</b></div>
+    <div class="card"><span>Checked In</span><b id="mCheckedIn">0</b></div>
   </div>
 
   <div class="panel">
@@ -179,6 +185,17 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
         <option>Sudah Dikirim</option>
         <option>Sudah Diserahkan</option>
       </select>
+      <select id="rsvpFilter">
+        <option value="">All RSVP</option>
+        <option value="Hadir">Hadir</option>
+        <option value="Tidak Hadir">Tidak Hadir</option>
+        <option value="Belum RSVP">Belum RSVP</option>
+      </select>
+      <select id="checkinFilter">
+        <option value="">All check-in</option>
+        <option value="Sudah Check-in">Sudah Check-in</option>
+        <option value="Belum Check-in">Belum Check-in</option>
+      </select>
       <select id="sortBy">
         <option value="name">Sort: Name</option>
         <option value="category">Sort: Category</option>
@@ -194,6 +211,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
           <tr>
             <th>Invitation</th><th>WhatsApp</th><th>WA Status</th><th>Category</th><th>Type</th>
             <th>Seats</th><th>VEG</th><th>Table</th><th>Delivery</th>
+            <th>RSVP</th><th>Attending</th><th>Check-in</th>
             <th>Opened</th><th>First Opened</th><th>Last Opened</th><th>Code</th><th>Actions</th>
           </tr>
         </thead>
@@ -294,6 +312,8 @@ const categories = [
 let guests = [];
 let wishDocs = [];
 let openEvents = [];
+let rsvps = [];
+let checkins = [];
 let editingCode = null;
 
 $("fCategory").innerHTML = categories.map(x=>`<option>${x}</option>`).join("");
@@ -430,6 +450,22 @@ function openStats(code){
   };
 }
 
+function rsvpFor(code){
+  return rsvps.find(x=>x.code===code) || null;
+}
+
+function checkinFor(code){
+  return checkins.find(x=>x.code===code) || null;
+}
+
+function rsvpStatus(code){
+  return rsvpFor(code)?.attendance || "Belum RSVP";
+}
+
+function checkinStatus(code){
+  return checkinFor(code)?.checkedIn ? "Sudah Check-in" : "Belum Check-in";
+}
+
 function isoDate(v){
   const d = toDateSafe(v);
   return d ? d.toISOString() : "";
@@ -458,7 +494,20 @@ function buildSheetPayload(){
       })) : [],
       openCount:o.count,
       firstOpened:o.first ? o.first.toISOString() : "",
-      lastOpened:o.last ? o.last.toISOString() : ""
+      lastOpened:o.last ? o.last.toISOString() : "",
+      rsvp:rsvpFor(g.code) ? {
+        attendance:rsvpFor(g.code).attendance || "",
+        attendingPax:Number(rsvpFor(g.code).attendingPax || 0),
+        vegetarianPax:Number(rsvpFor(g.code).vegetarianPax || 0),
+        note:rsvpFor(g.code).note || "",
+        updatedAt:isoDate(rsvpFor(g.code).updatedAt)
+      } : null,
+      checkin:checkinFor(g.code) ? {
+        checkedIn:Boolean(checkinFor(g.code).checkedIn),
+        actualPax:Number(checkinFor(g.code).actualPax || 0),
+        checkedInAt:isoDate(checkinFor(g.code).checkedInAt),
+        note:checkinFor(g.code).note || ""
+      } : null
     };
   });
 
@@ -714,15 +763,19 @@ async function load(){
     $("status").textContent = "Loading live data...";
     $("status").className = "status";
 
-    const [privSnap, openSnap, wishSnap] = await Promise.all([
+    const [privSnap, openSnap, wishSnap, rsvpSnap, checkinSnap] = await Promise.all([
       getDocs(collection(db,"privateInvitations")),
       getDocs(collection(db,"openEvents")),
-      getDocs(query(collection(db,"wishes"), orderBy("createdAt","desc")))
+      getDocs(query(collection(db,"wishes"), orderBy("createdAt","desc"))),
+      getDocs(collection(db,"rsvps")),
+      getDocs(collection(db,"checkins"))
     ]);
 
     guests = privSnap.docs.map(d => ({ code:d.id, ...d.data() }));
     openEvents = openSnap.docs.map(d => ({ id:d.id, ...d.data() }));
     wishDocs = wishSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+    rsvps = rsvpSnap.docs.map(d => ({ code:d.id, ...d.data() }));
+    checkins = checkinSnap.docs.map(d => ({ code:d.id, ...d.data() }));
 
     rebuildTableFilter();
     render();
@@ -755,6 +808,8 @@ function filteredGuests(){
   const waF = $("waFilter").value;
   const tableF = $("tableFilter").value;
   const delF = $("deliveryFilter").value;
+  const rsvpF = $("rsvpFilter").value;
+  const checkinF = $("checkinFilter").value;
   const sort = $("sortBy").value;
 
   let list = guests.filter(g => {
@@ -764,7 +819,10 @@ function filteredGuests(){
     const matchWa = !waF || (g.whatsappStatus || "Belum Dicek") === waF;
     const matchTable = !tableF || String(g.tableNo||"") === tableF;
     const matchDelivery = !delF || g.deliveryStatus === delF;
-    return matchQ && matchCat && matchVeg && matchWa && matchTable && matchDelivery;
+    const matchRsvp = !rsvpF || rsvpStatus(g.code) === rsvpF;
+    const matchCheckin = !checkinF || checkinStatus(g.code) === checkinF;
+    return matchQ && matchCat && matchVeg && matchWa && matchTable &&
+      matchDelivery && matchRsvp && matchCheckin;
   });
 
   list.sort((a,b)=>{
@@ -796,6 +854,9 @@ function render(){
       <td>${veg(g)}</td>
       <td>${esc(g.tableNo||"—")}</td>
       <td><span class="pill ${g.deliveryStatus==="Belum Dikirim"?"red":"green"}">${esc(g.deliveryStatus||"Belum Dikirim")}</span></td>
+      <td><span class="pill ${rsvpStatus(g.code)==="Hadir"?"green":rsvpStatus(g.code)==="Tidak Hadir"?"red":"gray"}">${esc(rsvpStatus(g.code))}</span></td>
+      <td>${rsvpFor(g.code)?.attendance==="Hadir" ? Number(rsvpFor(g.code)?.attendingPax||0) : "—"}</td>
+      <td><span class="pill ${checkinFor(g.code)?.checkedIn?"green":"gray"}">${esc(checkinStatus(g.code))}</span></td>
       <td>${o.count}</td>
       <td>${fmtDate(o.first)}</td>
       <td>${fmtDate(o.last)}</td>
@@ -806,11 +867,12 @@ function render(){
         <button data-a="wa-valid" data-c="${g.code}">✓ Valid</button>
         <button data-a="wa-invalid" data-c="${g.code}">✕ Invalid</button>
         <button data-a="wa" data-c="${g.code}">WhatsApp</button>
+        <button data-a="${checkinFor(g.code)?.checkedIn?"undo-checkin":"checkin"}" data-c="${g.code}">${checkinFor(g.code)?.checkedIn?"Undo Check-in":"Check In"}</button>
         <button data-a="edit" data-c="${g.code}">Edit</button>
         <button data-a="del" data-c="${g.code}">Delete</button>
       </div></td>
     </tr>`;
-  }).join("") || '<tr><td colspan="14">No guests found.</td></tr>';
+  }).join("") || '<tr><td colspan="17">No guests found.</td></tr>';
 
   $("mobileRows").innerHTML = list.map(g=>{
     const o = openStats(g.code);
@@ -826,6 +888,9 @@ function render(){
         <div class="meta"><span>Vegetarian</span>${veg(g)} VEG</div>
         <div class="meta"><span>Table</span>${esc(g.tableNo||"—")}</div>
         <div class="meta"><span>Delivery</span>${esc(g.deliveryStatus||"Belum Dikirim")}</div>
+        <div class="meta"><span>RSVP</span>${esc(rsvpStatus(g.code))}</div>
+        <div class="meta"><span>Attending</span>${rsvpFor(g.code)?.attendance==="Hadir" ? Number(rsvpFor(g.code)?.attendingPax||0) : "—"}</div>
+        <div class="meta"><span>Check-in</span>${esc(checkinStatus(g.code))}</div>
         <div class="meta"><span>Opened</span>${o.count}×</div>
         <div class="meta"><span>Personal Code</span><span class="codebox">${esc(g.code)}</span></div>
         <div class="meta"><span>First Opened</span>${fmtDate(o.first)}</div>
@@ -838,6 +903,7 @@ function render(){
         <button data-a="wa-valid" data-c="${g.code}">✓ WA Valid</button>
         <button data-a="wa-invalid" data-c="${g.code}">✕ WA Invalid</button>
         <button class="primary" data-a="wa" data-c="${g.code}">Send WhatsApp</button>
+        <button data-a="${checkinFor(g.code)?.checkedIn?"undo-checkin":"checkin"}" data-c="${g.code}">${checkinFor(g.code)?.checkedIn?"Undo Check-in":"Check In"}</button>
         <button data-a="edit" data-c="${g.code}">Edit</button>
         <button data-a="del" data-c="${g.code}">Delete</button>
       </div>
@@ -855,6 +921,10 @@ function render(){
   $("mOpened").textContent = allStats.filter(s=>s.count>0).length;
   $("mTotalOpens").textContent = allStats.reduce((a,s)=>a+s.count,0);
   $("mWishes").textContent = wishDocs.length;
+  $("mRsvpYes").textContent = guests.filter(g=>rsvpStatus(g.code)==="Hadir").length;
+  $("mRsvpNo").textContent = guests.filter(g=>rsvpStatus(g.code)==="Tidak Hadir").length;
+  $("mRsvpPending").textContent = guests.filter(g=>rsvpStatus(g.code)==="Belum RSVP").length;
+  $("mCheckedIn").textContent = guests.filter(g=>checkinFor(g.code)?.checkedIn).length;
 
   renderTableSummary();
   renderCategorySummary();
@@ -960,6 +1030,99 @@ function closeModal(){
   $("modal").classList.remove("open");
 }
 
+function testText(...values){
+  return /(test|sample|dummy|preview)/i.test(
+    values.map(v=>String(v||"")).join(" ")
+  );
+}
+
+function findTestRecords(){
+  const guestCodes = new Set(
+    guests
+      .filter(g =>
+        g.code === "HXLNG3" ||
+        g.code === "SAMPLE" ||
+        testText(g.invitationName,g.primaryContact,g.notes)
+      )
+      .map(g=>g.code)
+  );
+
+  const wishesToDelete = wishDocs.filter(w =>
+    guestCodes.has(w.code) ||
+    w.code === "SAMPLE" ||
+    testText(w.name,w.message)
+  );
+
+  const opensToDelete = openEvents.filter(e =>
+    guestCodes.has(e.code) || e.code === "SAMPLE"
+  );
+
+  const rsvpsToDelete = rsvps.filter(r =>
+    guestCodes.has(r.code) || r.code === "SAMPLE"
+  );
+
+  const checkinsToDelete = checkins.filter(c =>
+    guestCodes.has(c.code) || c.code === "SAMPLE"
+  );
+
+  return {
+    guestCodes:[...guestCodes],
+    wishes:wishesToDelete,
+    opens:opensToDelete,
+    rsvps:rsvpsToDelete,
+    checkins:checkinsToDelete
+  };
+}
+
+async function cleanTestData(){
+  const found = findTestRecords();
+  const total =
+    found.guestCodes.length +
+    found.wishes.length +
+    found.opens.length +
+    found.rsvps.length +
+    found.checkins.length;
+
+  if(!total){
+    alert("Tidak ditemukan data TEST / SAMPLE / DUMMY.");
+    return;
+  }
+
+  const summary =
+    `Detected test data:\n` +
+    `• Invitations: ${found.guestCodes.length}\n` +
+    `• Wishes: ${found.wishes.length}\n` +
+    `• Open events: ${found.opens.length}\n` +
+    `• RSVP: ${found.rsvps.length}\n` +
+    `• Check-ins: ${found.checkins.length}\n\n` +
+    `Type DELETE TEST to continue.`;
+
+  const typed = prompt(summary,"");
+  if(typed !== "DELETE TEST"){
+    alert("Cleanup dibatalkan.");
+    return;
+  }
+
+  const operations = [];
+
+  found.guestCodes.forEach(code=>{
+    operations.push(deleteDoc(doc(db,"privateInvitations",code)));
+    operations.push(deleteDoc(doc(db,"invitations",code)));
+  });
+  found.wishes.forEach(w=>operations.push(deleteDoc(doc(db,"wishes",w.id))));
+  found.opens.forEach(e=>operations.push(deleteDoc(doc(db,"openEvents",e.id))));
+  found.rsvps.forEach(r=>operations.push(deleteDoc(doc(db,"rsvps",r.code))));
+  found.checkins.forEach(c=>operations.push(deleteDoc(doc(db,"checkins",c.code))));
+
+  await Promise.all(operations);
+  await load();
+
+  alert(
+    "Data test berhasil dibersihkan. " +
+    "Klik Sync to Google Sheet agar mirror WO ikut diperbarui."
+  );
+}
+
 async function handleGuestAction(e){
   const b = e.target.closest("button[data-a]");
   if(!b) return;
@@ -1032,6 +1195,37 @@ async function handleGuestAction(e){
     }
   }
 
+  if(b.dataset.a==="checkin"){
+    const rsvp = rsvpFor(g.code);
+    const defaultPax = rsvp?.attendance === "Hadir"
+      ? Number(rsvp.attendingPax || 1)
+      : Number(g.seats || 1);
+    const entered = prompt(
+      `Actual pax for ${g.invitationName}:`,
+      String(defaultPax)
+    );
+    if(entered === null) return;
+
+    const actualPax = Math.max(1,Math.min(Number(entered || 1),Number(g.seats || 1)));
+
+    await setDoc(doc(db,"checkins",g.code),{
+      code:g.code,
+      checkedIn:true,
+      actualPax,
+      checkedInAt:serverTimestamp(),
+      note:""
+    },{merge:true});
+    await load();
+    return;
+  }
+
+  if(b.dataset.a==="undo-checkin"){
+    if(!confirm(`Undo check-in for ${g.invitationName}?`)) return;
+    await deleteDoc(doc(db,"checkins",g.code));
+    await load();
+    return;
+  }
+
   if(b.dataset.a==="edit") openModal(g);
 
   if(b.dataset.a==="del" && confirm("Delete this invitation?")){
@@ -1057,6 +1251,14 @@ $("signOut").onclick = ()=>fbSignOut(auth);
 $("reloadBtn").onclick = load;
 $("addBtn").onclick = ()=>openModal();
 $("openSheetBtn").onclick = ()=>window.open(GUEST_MASTER_URL,"_blank");
+$("openCheckinBtn").onclick = ()=>window.open("./checkin.html","_blank");
+$("cleanTestBtn").onclick = async()=>{
+  try{ await cleanTestData(); }
+  catch(err){
+    console.error(err);
+    alert("Cleanup gagal: " + err.message);
+  }
+};
 $("syncSheetBtn").onclick = async()=>{
   try{
     await syncToGoogleSheet();
@@ -1162,7 +1364,7 @@ $("wishes").onclick = async e=>{
   }
 };
 
-["search","catFilter","vegFilter","waFilter","tableFilter","deliveryFilter","sortBy"].forEach(id=>{
+["search","catFilter","vegFilter","waFilter","tableFilter","deliveryFilter","rsvpFilter","checkinFilter","sortBy"].forEach(id=>{
   $(id).addEventListener(id==="search"?"input":"change",render);
 });
 

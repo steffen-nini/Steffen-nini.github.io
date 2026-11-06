@@ -5,12 +5,22 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#681E2A">
-<meta name="build" content="final-uiux-v5-7-gate-title-responsive-2026-09-27">
+<meta name="build" content="final-uiux-v5-10-rsvp-share-preview-2026-11-06">
 <meta name="description" content="The Wedding of Steffen & Nini — 29 November 2026">
 <meta property="og:title" content="The Wedding of Steffen & Nini">
 <meta property="og:description" content="29 November 2026">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://steffen-nini.github.io/">
+<meta property="og:image" content="https://steffen-nini.github.io/share-preview.png">
+<meta property="og:image:secure_url" content="https://steffen-nini.github.io/share-preview.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Wedding of Steffen & Nini — 29 November 2026">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Wedding of Steffen & Nini">
+<meta name="twitter:description" content="29 November 2026">
+<meta name="twitter:image" content="https://steffen-nini.github.io/share-preview.png">
 <title>The Wedding of Steffen & Nini</title>
 
 <style>
@@ -469,6 +479,81 @@ main{overflow:hidden}
 }
 .story + .story{margin-top:17px}
 
+
+/* RSVP */
+.rsvp-section{background:rgba(255,251,246,.42)}
+.rsvp-card{
+  max-width:720px;
+  margin:32px auto 0;
+  padding:30px;
+}
+.rsvp-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.rsvp-field label{
+  display:block;
+  margin:0 0 7px;
+  color:var(--taupe);
+  font-size:.65rem;
+  font-weight:800;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.rsvp-field.full{grid-column:1/-1}
+.rsvp-choice{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.rsvp-choice label{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  border:1px solid #D9C5B2;
+  border-radius:13px;
+  background:#FFFDF9;
+  color:var(--deep);
+  font-weight:700;
+  cursor:pointer;
+}
+.rsvp-choice input{
+  width:auto;
+  margin:0 8px 0 0;
+  accent-color:var(--red);
+}
+.rsvp-field select{
+  width:100%;
+  min-height:48px;
+  border:1px solid #D9C5B2;
+  border-radius:13px;
+  background:#FFFDF9;
+  color:var(--ink);
+  padding:0 13px;
+  font-size:16px;
+}
+.rsvp-card .btn{width:100%;margin-top:4px}
+.rsvp-status{
+  min-height:20px;
+  margin-top:13px;
+  color:var(--red);
+  font-size:.78rem;
+  line-height:1.5;
+  text-align:center;
+}
+.rsvp-existing{
+  margin:0 0 18px;
+  padding:12px 14px;
+  border-radius:12px;
+  background:#F8EFE7;
+  color:#66534D;
+  font-size:.82rem;
+  line-height:1.55;
+}
+.rsvp-hidden{display:none!important}
+
 /* Wishes */
 .wish-grid{
   display:grid;
@@ -819,7 +904,10 @@ footer{
   .countdown-card{border-radius:20px}
   .countdown-item{padding:22px 5px}
   .countdown-item b{font-size:1.72rem}
-  .event-grid,.family-grid,.wish-grid{grid-template-columns:1fr}
+  .event-grid,.family-grid,.wish-grid,.rsvp-grid{grid-template-columns:1fr}
+  .rsvp-field.full{grid-column:auto}
+  .rsvp-card{padding:24px}
+  .rsvp-choice{grid-template-columns:1fr}
   .event-place{min-height:0}
   .event-card,.family-card,.wish-form,.wish-board{padding:24px}
   .story-wrap{padding:30px 6px}
@@ -1030,6 +1118,56 @@ footer{
     </div>
   </section>
 
+
+  <section class="section rsvp-section" id="rsvp-section">
+    <div class="container">
+      <div class="center reveal">
+        <div class="section-kicker smallcaps">RSVP</div>
+        <h2 class="section-title">Kindly Confirm Your Attendance</h2>
+        <p class="section-sub">Please let us know whether you will be joining us on 29 November 2026.</p>
+        <div class="ornament"><span>◆</span></div>
+      </div>
+
+      <form class="card rsvp-card reveal" id="rsvpForm">
+        <div class="rsvp-existing rsvp-hidden" id="rsvpExisting"></div>
+
+        <div class="rsvp-grid">
+          <div class="rsvp-field full">
+            <label>Attendance</label>
+            <div class="rsvp-choice">
+              <label>
+                <input type="radio" name="attendance" value="Hadir" required>
+                Will Attend
+              </label>
+              <label>
+                <input type="radio" name="attendance" value="Tidak Hadir" required>
+                Unable to Attend
+              </label>
+            </div>
+          </div>
+
+          <div class="rsvp-field">
+            <label for="rsvpPax">Number of Guests Attending</label>
+            <select id="rsvpPax"></select>
+          </div>
+
+          <div class="rsvp-field">
+            <label for="rsvpVegetarian">Vegetarian Meals</label>
+            <select id="rsvpVegetarian"></select>
+          </div>
+
+          <div class="rsvp-field full">
+            <label for="rsvpNote">Note <span style="text-transform:none;font-weight:500">(optional)</span></label>
+            <textarea id="rsvpNote" maxlength="300" placeholder="Any note for Steffen & Nini"></textarea>
+          </div>
+        </div>
+
+        <button class="btn" id="rsvpSubmit" type="submit">Submit RSVP</button>
+        <div class="rsvp-status" id="rsvpStatus" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
   <section class="section" id="wishes-section">
     <div class="container">
       <div class="center reveal">
@@ -1093,6 +1231,7 @@ import {
   getDoc,
   collection,
   addDoc,
+  setDoc,
   getDocs,
   query,
   orderBy,
@@ -1107,6 +1246,7 @@ const code = params.get("i");
 const $ = id => document.getElementById(id);
 
 let invitation = null;
+let currentRsvp = null;
 let allWishes = [];
 let wishesVisible = 6;
 let openTracked = false;
@@ -1143,6 +1283,7 @@ async function loadInvitation(){
 
     $("openInvitation").disabled = false;
     $("openInvitation").textContent = "Open Invitation";
+    $("rsvp-section").classList.add("rsvp-hidden");
 
     await loadWishes();
     return;
@@ -1170,7 +1311,8 @@ async function loadInvitation(){
     $("openInvitation").disabled = false;
     $("openInvitation").textContent = "Open Invitation";
 
-    await loadWishes();
+    setupRsvpOptions(seats);
+    await Promise.all([loadRsvp(), loadWishes()]);
   }catch(err){
     console.error(err);
     showInvalid();
@@ -1251,6 +1393,145 @@ $("openInvitation").addEventListener("click",async()=>{
   await startMusic();
 
   setTimeout(()=>document.querySelector(".hero")?.focus(),560);
+});
+
+
+function optionList(max, selected=0){
+  const options = [];
+  for(let i=0;i<=max;i++){
+    options.push(`<option value="${i}" ${i===selected?"selected":""}>${i}</option>`);
+  }
+  return options.join("");
+}
+
+function setupRsvpOptions(maxSeats){
+  const seats = Math.max(1,Number(maxSeats || 1));
+  $("rsvpPax").innerHTML = optionList(seats,Math.min(seats,1));
+  $("rsvpVegetarian").innerHTML = optionList(seats,0);
+  updateRsvpControls();
+}
+
+function selectedAttendance(){
+  return document.querySelector('input[name="attendance"]:checked')?.value || "";
+}
+
+function updateRsvpControls(){
+  const attendance = selectedAttendance();
+  const unable = attendance === "Tidak Hadir";
+  const maxSeats = Math.max(1,Number(invitation?.seats || 1));
+
+  $("rsvpPax").disabled = unable;
+  $("rsvpVegetarian").disabled = unable;
+
+  if(unable){
+    $("rsvpPax").value = "0";
+    $("rsvpVegetarian").value = "0";
+    return;
+  }
+
+  let pax = Math.max(1,Number($("rsvpPax").value || 1));
+  pax = Math.min(pax,maxSeats);
+  $("rsvpPax").value = String(pax);
+
+  $("rsvpVegetarian").innerHTML = optionList(
+    pax,
+    Math.min(Number($("rsvpVegetarian").value || 0),pax)
+  );
+}
+
+document.querySelectorAll('input[name="attendance"]').forEach(input=>{
+  input.addEventListener("change",updateRsvpControls);
+});
+$("rsvpPax").addEventListener("change",updateRsvpControls);
+
+async function loadRsvp(){
+  if(!code) return;
+
+  try{
+    const snap = await getDoc(doc(db,"rsvps",code));
+    if(!snap.exists()) return;
+
+    currentRsvp = snap.data();
+    const attendance = currentRsvp.attendance || "";
+    const input = document.querySelector(
+      `input[name="attendance"][value="${attendance}"]`
+    );
+    if(input) input.checked = true;
+
+    $("rsvpPax").value = String(Number(currentRsvp.attendingPax || 0));
+    updateRsvpControls();
+    $("rsvpVegetarian").value = String(
+      Number(currentRsvp.vegetarianPax || 0)
+    );
+    $("rsvpNote").value = currentRsvp.note || "";
+
+    $("rsvpExisting").textContent =
+      attendance === "Hadir"
+        ? `Your previous response: attending with ${Number(currentRsvp.attendingPax || 0)} guest(s). You may update it below.`
+        : "Your previous response: unable to attend. You may update it below.";
+    $("rsvpExisting").classList.remove("rsvp-hidden");
+
+  }catch(err){
+    console.warn("Unable to load RSVP:",err);
+  }
+}
+
+let rsvpSending = false;
+$("rsvpForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();
+  if(!code || rsvpSending) return;
+
+  const attendance = selectedAttendance();
+  if(!attendance){
+    $("rsvpStatus").textContent = "Please choose your attendance.";
+    return;
+  }
+
+  const maxSeats = Math.max(1,Number(invitation?.seats || 1));
+  const attendingPax = attendance === "Hadir"
+    ? Math.max(1,Math.min(Number($("rsvpPax").value || 1),maxSeats))
+    : 0;
+  const vegetarianPax = attendance === "Hadir"
+    ? Math.max(0,Math.min(Number($("rsvpVegetarian").value || 0),attendingPax))
+    : 0;
+  const note = $("rsvpNote").value.trim();
+
+  const submit = $("rsvpSubmit");
+  rsvpSending = true;
+  submit.disabled = true;
+  submit.textContent = "Submitting…";
+  $("rsvpStatus").textContent = "";
+
+  try{
+    await setDoc(doc(db,"rsvps",code),{
+      code,
+      attendance,
+      attendingPax,
+      vegetarianPax,
+      note,
+      updatedAt:serverTimestamp()
+    });
+
+    currentRsvp = {
+      code,attendance,attendingPax,vegetarianPax,note
+    };
+
+    $("rsvpExisting").textContent =
+      attendance === "Hadir"
+        ? `Thank you. We have recorded ${attendingPax} guest(s) attending.`
+        : "Thank you. We have recorded that you are unable to attend.";
+    $("rsvpExisting").classList.remove("rsvp-hidden");
+    $("rsvpStatus").textContent = "Your RSVP has been saved.";
+
+  }catch(err){
+    console.error(err);
+    $("rsvpStatus").textContent =
+      "Your RSVP could not be saved. Please try again.";
+  }finally{
+    rsvpSending = false;
+    submit.disabled = false;
+    submit.textContent = "Submit RSVP";
+  }
 });
 
 function renderWishes(){
@@ -1358,8 +1639,9 @@ $("wishMessage").addEventListener("input",()=>{
 let wishSending = false;
 $("wishForm").addEventListener("submit",async(e)=>{
   e.preventDefault();
-  if(!code || wishSending) return;
+  if(wishSending) return;
 
+  const wishCode = code || "PUBLIC";
   const name = $("wishName").value.trim();
   const message = $("wishMessage").value.trim();
   if(!name || !message) return;
@@ -1372,7 +1654,7 @@ $("wishForm").addEventListener("submit",async(e)=>{
   try{
     $("wishStatus").textContent = "";
     await addDoc(collection(db,"wishes"),{
-      code,
+      code:wishCode,
       name,
       message,
       createdAt:serverTimestamp()

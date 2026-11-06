@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#681E2A">
+<title>Steffen & Nini — WO Check-in</title>
+<style>
+:root{
+  --ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;
+  --taupe:#8A7565;--line:#E7D7C6;--ink:#352825;
+  --green:#4f6f50;--greenBg:#e8f1e5;--redBg:#f6dfdf;--grayBg:#eee9e5
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ivory);color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+main{max-width:900px;margin:auto;padding:20px 14px 60px}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;color:var(--deep);font-weight:500}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  border:1px solid var(--red);background:var(--red);color:#fff;
+  border-radius:11px;padding:10px 13px;font-weight:700
+}
+.btn.alt{background:transparent;color:var(--red)}
+.btn.green{background:var(--green);border-color:var(--green)}
+.note{font-size:.76rem;color:var(--taupe);line-height:1.5}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}
+.card,.guest{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:17px;padding:15px
+}
+.card span{
+  display:block;color:var(--taupe);font-size:.65rem;
+  text-transform:uppercase;letter-spacing:.08em
+}
+.card b{display:block;color:var(--red);font:500 1.7rem Georgia,serif;margin-top:6px}
+.toolbar{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:14px}
+input,select{
+  width:100%;border:1px solid #DBC8B7;background:#FFFDFA;
+  border-radius:11px;padding:11px;color:var(--ink);font-size:16px
+}
+.guest{margin:10px 0}
+.guest.checked{border-color:#B8CFB5;background:#FBFFF9}
+.guest-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.guest h3{margin:0;font-size:1.13rem}
+.pill{
+  display:inline-block;border-radius:999px;padding:5px 8px;
+  font-size:.67rem;background:var(--grayBg);color:#685B55
+}
+.pill.green{background:var(--greenBg);color:var(--green)}
+.pill.red{background:var(--redBg);color:#8D3034}
+.meta{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:8px;margin:13px 0
+}
+.meta div{background:#F8EFE7;border-radius:10px;padding:8px}
+.meta span{
+  display:block;color:var(--taupe);font-size:.61rem;
+  text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px
+}
+.guest-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.empty{text-align:center;padding:34px;color:var(--taupe)}
+.status{font-size:.78rem;margin:9px 0}.error{color:#A1262B}.ok{color:var(--green)}
+.login{
+  position:fixed;inset:0;z-index:100;display:grid;place-items:center;
+  padding:18px;background:linear-gradient(135deg,#4C1820,#8D3235)
+}
+.login.hide{display:none}
+.loginbox{width:min(420px,100%);padding:25px;border-radius:22px;background:#FFFAF4;text-align:center}
+.loginbox input{margin:6px 0}.loginbox .btn{width:100%;margin-top:7px}
+@media(max-width:700px){
+  .cards{grid-template-columns:1fr 1fr}
+  .toolbar{grid-template-columns:1fr 1fr}
+  .toolbar input{grid-column:1/-1}
+  .meta{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="login" id="login">
+  <div class="loginbox">
+    <div style="font-size:2.7rem;color:#9E2A2B">囍</div>
+    <h2>WO Check-in</h2>
+    <p class="note">Login menggunakan akun Firebase yang diizinkan.</p>
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button class="btn" id="signIn">Sign In</button>
+    <div id="loginStatus" class="status"></div>
+  </div>
+</div>
+
+<main>
+  <div class="top">
+    <div>
+      <h1 style="margin:0">Steffen &amp; Nini — Check-in</h1>
+      <div class="note">29 November 2026 • WO operational view</div>
+    </div>
+    <div class="actions">
+      <button class="btn alt" id="refreshBtn">Refresh</button>
+      <a class="btn alt" href="./admin-live.html">Admin</a>
+      <button class="btn alt" id="signOut">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><span>Invitations</span><b id="mInv">0</b></div>
+    <div class="card"><span>Expected Pax</span><b id="mExpected">0</b></div>
+    <div class="card"><span>Checked In</span><b id="mChecked">0</b></div>
+    <div class="card"><span>Actual Pax</span><b id="mActual">0</b></div>
+  </div>
+
+  <div class="toolbar">
+    <input id="search" placeholder="Cari nama / nomor WA / kode / meja">
+    <select id="tableFilter"><option value="">Semua Meja</option></select>
+    <select id="statusFilter">
+      <option value="">Semua Status</option>
+      <option value="Belum Check-in">Belum Check-in</option>
+      <option value="Sudah Check-in">Sudah Check-in</option>
+    </select>
+  </div>
+
+  <div id="status" class="status"></div>
+  <div id="guestList"></div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,signInWithEmailAndPassword,signOut as fbSignOut,onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,collection,doc,getDocs,setDoc,deleteDoc,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const $=id=>document.getElementById(id);
+
+let guests=[],rsvps=[],checkins=[];
+
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,m=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[m]));
+}
+function veg(g){return (g.members||[]).filter(m=>m.meal==="Vegetarian").length}
+function rsvpFor(code){return rsvps.find(x=>x.code===code)||null}
+function checkinFor(code){return checkins.find(x=>x.code===code)||null}
+function expectedPax(g){
+  const r=rsvpFor(g.code);
+  if(r?.attendance==="Tidak Hadir")return 0;
+  if(r?.attendance==="Hadir")return Number(r.attendingPax||0);
+  return Number(g.seats||0);
+}
+
+async function load(){
+  try{
+    $("status").textContent="Loading...";
+    const [guestSnap,rsvpSnap,checkinSnap]=await Promise.all([
+      getDocs(collection(db,"privateInvitations")),
+      getDocs(collection(db,"rsvps")),
+      getDocs(collection(db,"checkins"))
+    ]);
+    guests=guestSnap.docs.map(d=>({code:d.id,...d.data()}));
+    rsvps=rsvpSnap.docs.map(d=>({code:d.id,...d.data()}));
+    checkins=checkinSnap.docs.map(d=>({code:d.id,...d.data()}));
+    rebuildTables();
+    render();
+    $("status").textContent="Live data loaded.";
+    $("status").className="status ok";
+  }catch(err){
+    console.error(err);
+    $("status").textContent=err.message;
+    $("status").className="status error";
+  }
+}
+
+function rebuildTables(){
+  const current=$("tableFilter").value;
+  const tables=[...new Set(guests.map(g=>String(g.tableNo||"").trim()).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+  $("tableFilter").innerHTML='<option value="">Semua Meja</option>'+
+    tables.map(t=>`<option>${esc(t)}</option>`).join("");
+  if(tables.includes(current))$("tableFilter").value=current;
+}
+
+function filtered(){
+  const q=$("search").value.toLowerCase().trim();
+  const table=$("tableFilter").value;
+  const status=$("statusFilter").value;
+  return guests.filter(g=>{
+    const checked=Boolean(checkinFor(g.code)?.checkedIn);
+    const statusText=checked?"Sudah Check-in":"Belum Check-in";
+    return (!q||JSON.stringify(g).toLowerCase().includes(q)||g.code.toLowerCase().includes(q)) &&
+      (!table||String(g.tableNo||"")===table) &&
+      (!status||statusText===status);
+  }).sort((a,b)=>{
+    const ac=Boolean(checkinFor(a.code)?.checkedIn);
+    const bc=Boolean(checkinFor(b.code)?.checkedIn);
+    if(ac!==bc)return ac-bc;
+    return String(a.invitationName||"").localeCompare(String(b.invitationName||""));
+  });
+}
+
+function render(){
+  const list=filtered();
+  $("guestList").innerHTML=list.length?list.map(g=>{
+    const r=rsvpFor(g.code);
+    const c=checkinFor(g.code);
+    const checked=Boolean(c?.checkedIn);
+    return `<article class="guest ${checked?"checked":""}">
+      <div class="guest-head">
+        <div>
+          <h3>${esc(g.invitationName)}</h3>
+          <div class="note">${esc(g.phone||"No WhatsApp")} • Code ${esc(g.code)}</div>
+        </div>
+        <span class="pill ${checked?"green":""}">${checked?"Sudah Check-in":"Belum Check-in"}</span>
+      </div>
+      <div class="meta">
+        <div><span>Meja</span>${esc(g.tableNo||"Belum diatur")}</div>
+        <div><span>Reserved</span>${Number(g.seats||0)} pax</div>
+        <div><span>RSVP</span>${esc(r?.attendance||"Belum RSVP")}</div>
+        <div><span>Expected</span>${expectedPax(g)} pax</div>
+        <div><span>VEG Admin</span>${veg(g)} pax</div>
+        <div><span>VEG RSVP</span>${Number(r?.vegetarianPax||0)} pax</div>
+        <div><span>Actual</span>${checked?Number(c?.actualPax||0):"—"}</div>
+        <div><span>Category</span>${esc(g.category||"—")}</div>
+      </div>
+      <div class="guest-actions">
+        <button class="btn ${checked?"alt":"green"}" data-action="${checked?"undo":"checkin"}" data-code="${g.code}">
+          ${checked?"Undo Check-in":"Check In"}
+        </button>
+        <button class="btn alt" data-action="copy" data-code="${g.code}">Copy Invitation Link</button>
+      </div>
+    </article>`;
+  }).join(""):'<div class="empty">Tidak ada tamu yang cocok.</div>';
+
+  $("mInv").textContent=guests.length;
+  $("mExpected").textContent=guests.reduce((a,g)=>a+expectedPax(g),0);
+  $("mChecked").textContent=guests.filter(g=>checkinFor(g.code)?.checkedIn).length;
+  $("mActual").textContent=checkins.reduce((a,c)=>a+(c.checkedIn?Number(c.actualPax||0):0),0);
+}
+
+$("guestList").onclick=async e=>{
+  const b=e.target.closest("button[data-action]");
+  if(!b)return;
+  const g=guests.find(x=>x.code===b.dataset.code);
+  if(!g)return;
+
+  if(b.dataset.action==="copy"){
+    const link=`https://steffen-nini.github.io/?i=${g.code}`;
+    try{await navigator.clipboard.writeText(link);alert("Link copied.");}
+    catch{prompt("Copy link:",link);}
+    return;
+  }
+
+  if(b.dataset.action==="checkin"){
+    const defaultPax=Math.max(1,expectedPax(g)||Number(g.seats||1));
+    const value=prompt(`Actual pax for ${g.invitationName}:`,String(defaultPax));
+    if(value===null)return;
+    const actualPax=Math.max(1,Math.min(Number(value||1),Number(g.seats||1)));
+    await setDoc(doc(db,"checkins",g.code),{
+      code:g.code,checkedIn:true,actualPax,
+      checkedInAt:serverTimestamp(),note:""
+    },{merge:true});
+    await load();
+  }
+
+  if(b.dataset.action==="undo"){
+    if(!confirm(`Undo check-in for ${g.invitationName}?`))return;
+    await deleteDoc(doc(db,"checkins",g.code));
+    await load();
+  }
+};
+
+["search","tableFilter","statusFilter"].forEach(id=>{
+  $(id).addEventListener(id==="search"?"input":"change",render);
+});
+$("refreshBtn").onclick=load;
+$("signOut").onclick=()=>fbSignOut(auth);
+$("signIn").onclick=async()=>{
+  try{
+    await signInWithEmailAndPassword(auth,$("email").value,$("password").value);
+    $("loginStatus").textContent="";
+  }catch(err){
+    $("loginStatus").textContent=err.message;
+    $("loginStatus").className="status error";
+  }
+};
+onAuthStateChanged(auth,user=>{
+  if(user){$("login").classList.add("hide");load();}
+  else{$("login").classList.remove("hide");}
+});
+</script>
+</body>
+</html>
