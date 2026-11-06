@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Steffen & Nini — Wedding Admin V2.9</title>
+<title>Steffen & Nini — Wedding Admin V3.0</title>
 <style>
 :root{
   --ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;
@@ -111,7 +111,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <div class="login" id="login">
   <div class="loginbox">
     <div style="font-size:2.5rem;color:#9E2A2B">囍</div>
-    <h2>Wedding Admin V2.9</h2>
+    <h2>Wedding Admin V3.0</h2>
     <input id="email" type="email" placeholder="Admin email">
     <input id="password" type="password" placeholder="Password">
     <button class="btn" id="signIn">Sign in</button>
@@ -122,7 +122,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <main>
   <div class="top">
     <div>
-      <h1>Steffen &amp; Nini — Admin V2.9</h1>
+      <h1>Steffen &amp; Nini — Admin V3.0</h1>
       <div class="note">29 November 2026 • Firebase live</div>
     </div>
     <div>
@@ -482,33 +482,143 @@ function delay(ms){
 }
 
 const SHEET_SYNC_CALLBACK_URL = "https://steffen-nini.github.io/sync-callback.html";
+const SHEET_SYNC_STORAGE_PREFIX = "steffenNiniSheetSync:";
 
-async function postToSheetSync(idToken, payload){
-  const sessionId =
-    Date.now().toString(36) + "_" +
+function createSyncSessionId(){
+  return Date.now().toString(36) + "_" +
     Math.random().toString(36).slice(2,12);
+}
 
-  const frameName = "sheetSyncFrame_" + sessionId;
-  const iframe = document.createElement("iframe");
-  iframe.name = frameName;
-  iframe.style.display = "none";
-  iframe.setAttribute("aria-hidden","true");
-  iframe.src = SHEET_SYNC_CALLBACK_URL + "?status=ready&session_id=" + encodeURIComponent(sessionId);
-  document.body.appendChild(iframe);
+function openSyncWindow(sessionId){
+  const name = "sheetSyncWindow_" + sessionId;
+  const popup = window.open(
+    "",
+    name,
+    "popup=yes,width=520,height=640,resizable=yes,scrollbars=yes"
+  );
 
-  // Wait for the same-origin callback page to be ready before POSTing.
-  await new Promise((resolve) => {
-    if(iframe.contentDocument?.readyState === "complete"){
-      resolve();
-      return;
-    }
-    iframe.addEventListener("load", resolve, {once:true});
+  if(!popup){
+    throw new Error(
+      "Popup diblokir browser. Izinkan pop-up untuk steffen-nini.github.io lalu coba lagi."
+    );
+  }
+
+  try{
+    popup.document.open();
+    popup.document.write(`<!doctype html>
+      <meta charset="utf-8">
+      <title>Google Sheet Sync</title>
+      <style>
+        body{
+          margin:0;min-height:100vh;display:grid;place-items:center;
+          font-family:system-ui,sans-serif;background:#F6F0E7;color:#681E2A;
+          text-align:center;padding:24px
+        }
+        .box{max-width:360px}
+        .mark{font:700 3rem "Times New Roman",serif;color:#9E2A2B}
+        p{color:#8A7565;line-height:1.6}
+      </style>
+      <div class="box">
+        <div class="mark">囍</div>
+        <h2>Syncing to Google Sheet…</h2>
+        <p>Jendela ini akan tertutup otomatis setelah proses selesai.</p>
+      </div>`);
+    popup.document.close();
+  }catch(_){}
+
+  return { popup, name };
+}
+
+function waitForSyncResult(sessionId, popup){
+  const storageKey = SHEET_SYNC_STORAGE_PREFIX + sessionId;
+
+  return new Promise((resolve, reject) => {
+    let settled = false;
+
+    const cleanup = () => {
+      window.removeEventListener("message", onMessage);
+      window.removeEventListener("storage", onStorage);
+      clearInterval(pollTimer);
+      clearTimeout(timeoutTimer);
+      localStorage.removeItem(storageKey);
+    };
+
+    const finish = (result) => {
+      if(settled) return;
+      settled = true;
+      cleanup();
+
+      try{
+        if(popup && !popup.closed) popup.close();
+      }catch(_){}
+
+      if(result?.ok){
+        resolve(result);
+      }else{
+        reject(new Error(result?.error || "Google Sheet sync failed."));
+      }
+    };
+
+    const readStorage = () => {
+      const raw = localStorage.getItem(storageKey);
+      if(!raw) return;
+
+      try{
+        finish(JSON.parse(raw));
+      }catch(err){
+        finish({ok:false,error:"Hasil callback tidak valid."});
+      }
+    };
+
+    const onStorage = (event) => {
+      if(event.key === storageKey && event.newValue){
+        readStorage();
+      }
+    };
+
+    const onMessage = (event) => {
+      if(event.origin !== location.origin) return;
+      const data = event.data;
+
+      if(
+        data?.source === "steffen-nini-sheet-sync" &&
+        data?.sessionId === sessionId
+      ){
+        finish(data.result);
+      }
+    };
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("message", onMessage);
+
+    const pollTimer = setInterval(readStorage, 400);
+
+    const timeoutTimer = setTimeout(() => {
+      if(settled) return;
+
+      const popupClosed = popup ? popup.closed : false;
+      finish({
+        ok:false,
+        error:
+          "Sync belum menerima hasil setelah 90 detik." +
+          (popupClosed
+            ? " Jendela sync sudah tertutup sebelum callback diterima."
+            : " Periksa apakah pop-up/redirect diblokir browser.")
+      });
+    }, 90000);
   });
+}
+
+async function postToSheetSync(idToken, payload, session){
+  const { sessionId, popup, targetName } = session;
+  const storageKey = SHEET_SYNC_STORAGE_PREFIX + sessionId;
+
+  localStorage.removeItem(storageKey);
 
   const form = document.createElement("form");
   form.method = "POST";
   form.action = SHEET_SYNC_URL;
-  form.target = frameName;
+  form.target = targetName;
   form.style.display = "none";
 
   const addField = (name, value) => {
@@ -524,64 +634,13 @@ async function postToSheetSync(idToken, payload){
   addField("payload", JSON.stringify(payload));
   document.body.appendChild(form);
 
+  const resultPromise = waitForSyncResult(sessionId, popup);
+
   try{
-    const resultPromise = new Promise((resolve, reject) => {
-      let settled = false;
-
-      const timer = setTimeout(() => {
-        if(settled) return;
-        settled = true;
-        reject(new Error("Sync timeout setelah 60 detik."));
-      }, 60000);
-
-      const onLoad = () => {
-        if(settled) return;
-
-        try{
-          const href = iframe.contentWindow.location.href;
-
-          // Ignore the initial ready page.
-          if(!href.startsWith(SHEET_SYNC_CALLBACK_URL)) return;
-
-          const url = new URL(href);
-          const status = url.searchParams.get("status");
-          const returnedSession = url.searchParams.get("session_id");
-
-          if(returnedSession !== sessionId) return;
-          if(status === "ready") return;
-
-          settled = true;
-          clearTimeout(timer);
-
-          const message = url.searchParams.get("message") || "";
-          const invitations = Number(url.searchParams.get("invitations") || 0);
-          const wishes = Number(url.searchParams.get("wishes") || 0);
-
-          if(status === "ok"){
-            resolve({
-              ok:true,
-              invitations,
-              wishes,
-              syncedAt:new Date().toISOString()
-            });
-          }else{
-            reject(new Error(message || "Apps Script sync failed."));
-          }
-        }catch(_){
-          // Cross-origin Apps Script page loaded. Wait for its redirect back
-          // to sync-callback.html, where the parent can read the URL.
-        }
-      };
-
-      iframe.addEventListener("load", onLoad);
-    });
-
     form.submit();
     return await resultPromise;
-
   }finally{
     form.remove();
-    setTimeout(() => iframe.remove(), 500);
   }
 }
 
@@ -594,6 +653,11 @@ async function syncToGoogleSheet(){
   const btn = $("syncSheetBtn");
   const status = $("syncSheetStatus");
 
+  // Must happen before the first await so browsers treat it as a direct
+  // response to the user's click and do not block the popup.
+  const sessionId = createSyncSessionId();
+  const syncWindow = openSyncWindow(sessionId);
+
   btn.disabled = true;
   btn.classList.add("syncing");
   btn.textContent = "Syncing…";
@@ -601,9 +665,17 @@ async function syncToGoogleSheet(){
   status.className = "sync-note";
 
   try{
-    // Fresh Firebase ID token is verified again by Apps Script.
     const idToken = await user.getIdToken(true);
-    const result = await postToSheetSync(idToken, buildSheetPayload());
+
+    const result = await postToSheetSync(
+      idToken,
+      buildSheetPayload(),
+      {
+        sessionId,
+        popup:syncWindow.popup,
+        targetName:syncWindow.name
+      }
+    );
 
     const stamp = new Intl.DateTimeFormat("id-ID",{
       day:"2-digit",month:"short",year:"numeric",
@@ -611,14 +683,25 @@ async function syncToGoogleSheet(){
       timeZone:"Asia/Jakarta",hour12:false
     }).format(new Date());
 
-    status.textContent = `Synced • ${result.invitations ?? guests.length} invitations • ${result.wishes ?? wishDocs.length} wishes • ${stamp} WIB`;
+    status.textContent =
+      `Synced • ${result.invitations ?? guests.length} invitations • ` +
+      `${result.wishes ?? wishDocs.length} wishes • ${stamp} WIB`;
     status.className = "sync-note ok";
     return result;
+
   }catch(err){
     console.error("Google Sheet sync failed:", err);
     status.textContent = "Sync failed • " + err.message;
     status.className = "sync-note error";
+
+    try{
+      if(syncWindow.popup && !syncWindow.popup.closed){
+        syncWindow.popup.close();
+      }
+    }catch(_){}
+
     throw err;
+
   }finally{
     btn.disabled = false;
     btn.classList.remove("syncing");

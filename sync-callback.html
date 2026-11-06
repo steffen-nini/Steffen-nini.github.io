@@ -3,9 +3,81 @@
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
-<title>Sync Callback</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Google Sheet Sync Result</title>
+<style>
+:root{--ivory:#F6F0E7;--red:#9E2A2B;--deep:#681E2A;--taupe:#8A7565}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;display:grid;place-items:center;
+  padding:24px;background:var(--ivory);color:var(--deep);
+  font-family:Inter,system-ui,sans-serif;text-align:center
+}
+.box{max-width:420px}
+.mark{font:700 3.4rem "Times New Roman",serif;color:var(--red)}
+h1{font:500 1.8rem Georgia,serif;margin:12px 0}
+p{color:var(--taupe);line-height:1.65}
+</style>
 </head>
 <body>
-Sync callback.
+<div class="box">
+  <div class="mark">囍</div>
+  <h1 id="title">Processing sync result…</h1>
+  <p id="message">This window will close automatically.</p>
+</div>
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  const status = params.get("status") || "error";
+  const sessionId = params.get("session_id") || "";
+  const message = params.get("message") || "";
+  const invitations = Number(params.get("invitations") || 0);
+  const wishes = Number(params.get("wishes") || 0);
+
+  const result = status === "ok"
+    ? {
+        ok:true,
+        invitations,
+        wishes,
+        syncedAt:new Date().toISOString()
+      }
+    : {
+        ok:false,
+        error:message || "Apps Script sync failed."
+      };
+
+  document.getElementById("title").textContent =
+    result.ok ? "Sync successful" : "Sync failed";
+  document.getElementById("message").textContent =
+    result.ok
+      ? `${invitations} invitations and ${wishes} wishes were synced.`
+      : result.error;
+
+  if(sessionId){
+    const key = "steffenNiniSheetSync:" + sessionId;
+
+    try{
+      localStorage.setItem(key, JSON.stringify(result));
+    }catch(_){}
+
+    try{
+      if(window.opener && !window.opener.closed){
+        window.opener.postMessage(
+          {
+            source:"steffen-nini-sheet-sync",
+            sessionId,
+            result
+          },
+          location.origin
+        );
+      }
+    }catch(_){}
+  }
+
+  setTimeout(() => {
+    try{ window.close(); }catch(_){}
+  }, result.ok ? 900 : 3500);
+})();
+</script>
 </body>
 </html>
