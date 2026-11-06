@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Steffen & Nini — Wedding Admin V3.2</title>
+<title>Steffen & Nini — Wedding Admin V3.3</title>
 <style>
 :root{
   --ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;
@@ -111,7 +111,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <div class="login" id="login">
   <div class="loginbox">
     <div style="font-size:2.5rem;color:#9E2A2B">囍</div>
-    <h2>Wedding Admin V3.2</h2>
+    <h2>Wedding Admin V3.3</h2>
     <input id="email" type="email" placeholder="Admin email">
     <input id="password" type="password" placeholder="Password">
     <button class="btn" id="signIn">Sign in</button>
@@ -122,7 +122,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <main>
   <div class="top">
     <div>
-      <h1>Steffen &amp; Nini — Admin V3.2</h1>
+      <h1>Steffen &amp; Nini — Admin V3.3</h1>
       <div class="note">29 November 2026 • Firebase live</div>
     </div>
     <div>
@@ -863,6 +863,7 @@ function render(){
       <td><code>${esc(g.code)}</code></td>
       <td><div class="actions">
         <button data-a="copy" data-c="${g.code}">Copy Link</button>
+        <button data-a="qr" data-c="${g.code}">Guest QR</button>
         <button data-a="check-wa" data-c="${g.code}">Check WA</button>
         <button data-a="wa-valid" data-c="${g.code}">✓ Valid</button>
         <button data-a="wa-invalid" data-c="${g.code}">✕ Invalid</button>
@@ -899,6 +900,7 @@ function render(){
 
       <div class="mobile-actions">
         <button data-a="copy" data-c="${g.code}">Copy Link</button>
+        <button data-a="qr" data-c="${g.code}">Guest QR</button>
         <button data-a="check-wa" data-c="${g.code}">Check WA</button>
         <button data-a="wa-valid" data-c="${g.code}">✓ WA Valid</button>
         <button data-a="wa-invalid" data-c="${g.code}">✕ WA Invalid</button>
@@ -1137,6 +1139,14 @@ async function handleGuestAction(e){
     }catch{
       prompt("Copy this personal link:",personalLink(g));
     }
+  }
+
+  if(b.dataset.a==="qr"){
+    window.open(
+      personalLink(g) + "#guest-qr-section",
+      "_blank"
+    );
+    return;
   }
 
   if(b.dataset.a==="check-wa"){

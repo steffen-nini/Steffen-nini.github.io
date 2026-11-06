@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#681E2A">
-<title>Steffen & Nini — WO Check-in</title>
+<title>Steffen & Nini — WO Check-in V1.1</title>
 <style>
 :root{
   --ivory:#F6F0E7;--paper:#FFFBF6;--red:#9E2A2B;--deep:#681E2A;
@@ -103,6 +103,7 @@ input,select{
     </div>
     <div class="actions">
       <button class="btn alt" id="refreshBtn">Refresh</button>
+      <button class="btn alt" id="clearQrBtn">Clear QR Filter</button>
       <a class="btn alt" href="./admin-live.html">Admin</a>
       <button class="btn alt" id="signOut">Sign Out</button>
     </div>
@@ -143,6 +144,7 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 const $=id=>document.getElementById(id);
+const guestCodeParam=new URLSearchParams(location.search).get("i");
 
 let guests=[],rsvps=[],checkins=[];
 
@@ -173,9 +175,23 @@ async function load(){
     rsvps=rsvpSnap.docs.map(d=>({code:d.id,...d.data()}));
     checkins=checkinSnap.docs.map(d=>({code:d.id,...d.data()}));
     rebuildTables();
+
+    if(guestCodeParam){
+      $("search").value=guestCodeParam;
+    }
+
     render();
-    $("status").textContent="Live data loaded.";
-    $("status").className="status ok";
+
+    if(guestCodeParam){
+      const match=guests.find(g=>g.code===guestCodeParam);
+      $("status").textContent=match
+        ? `QR detected: ${match.invitationName}`
+        : `Guest code ${guestCodeParam} was not found.`;
+      $("status").className=match?"status ok":"status error";
+    }else{
+      $("status").textContent="Live data loaded.";
+      $("status").className="status ok";
+    }
   }catch(err){
     console.error(err);
     $("status").textContent=err.message;
@@ -285,6 +301,13 @@ $("guestList").onclick=async e=>{
   $(id).addEventListener(id==="search"?"input":"change",render);
 });
 $("refreshBtn").onclick=load;
+$("clearQrBtn").onclick=()=>{
+  history.replaceState(null,"",location.pathname);
+  $("search").value="";
+  render();
+  $("status").textContent="QR filter cleared.";
+  $("status").className="status ok";
+};
 $("signOut").onclick=()=>fbSignOut(auth);
 $("signIn").onclick=async()=>{
   try{
